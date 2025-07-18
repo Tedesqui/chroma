@@ -15,7 +15,7 @@
       schema: {
         src: {type: 'map'},
         color: {type: 'color', default: 'green'},
-        threshold: {type: 'number', default: 0.3}
+        threshold: {type: 'number', default: 0.05}
       },
 
       vertexShader: [
@@ -34,7 +34,7 @@ fragmentShader: [
     'void main() {',
     '  vec4 texColor = texture2D(src, vUv);',
     '  float diff = distance(texColor.rgb, vec3(0.0, 0.843, 0.0));',
-    '  if (diff < threshold) {',
+    '  if (diff < 0.05) {', // threshold reduzido, valor correto
     '    discard;',
     '  } else {',
     '    gl_FragColor = texColor;',
