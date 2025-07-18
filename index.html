@@ -148,7 +148,7 @@
           // Cor a ser removida (verde padrão). Altere se o fundo do seu vídeo for outra cor.
           const keyColor = new THREE.Color(0x00FF00); 
           // Tolerância da cor (0.0 a 5.0). Ajuste para remover mais ou menos tons da cor.
-          const tolerance = 0.4; 
+          const tolerance = 3.0; 
 
           material.onBeforeCompile = (shader) => {
             shader.uniforms.keyColor = { value: keyColor };
