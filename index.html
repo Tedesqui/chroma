@@ -111,7 +111,7 @@
 
 <a-entity id="video-holder" position="0 1.7 -15"
   animation="property: position; to: 0 1.7 -10; dur: 1500; easing: easeOutElastic">
-  <a-video width="6" height="6" src="#video_inicial" color="#FFFFFF"></a-video>
+  <a-video width="6" height="6" src="#video_inicial" color="#FFFFFF" material="transparent: true" chroma-key-remover></a-video>
 </a-entity>
   </a-scene>
 
@@ -137,6 +137,44 @@
   </div>
 
   <script>
+    // NOVO COMPONENTE PARA REMOVER O CHROMA KEY
+    AFRAME.registerComponent('chroma-key-remover', {
+      init: function () {
+        this.el.addEventListener('materialtextureloaded', () => {
+          const mesh = this.el.getObject3D('mesh');
+          if (!mesh || !mesh.material) { return; }
+
+          const material = mesh.material;
+          // Cor a ser removida (verde padrão). Altere se o fundo do seu vídeo for outra cor.
+          const keyColor = new THREE.Color(0x00FF00); 
+          // Tolerância da cor (0.0 a 1.0). Ajuste para remover mais ou menos tons da cor.
+          const tolerance = 0.4; 
+
+          material.onBeforeCompile = (shader) => {
+            shader.uniforms.keyColor = { value: keyColor };
+            shader.uniforms.tolerance = { value: tolerance };
+
+            shader.fragmentShader = `
+              uniform vec3 keyColor;
+              uniform float tolerance;
+            ` + shader.fragmentShader;
+
+            shader.fragmentShader = shader.fragmentShader.replace(
+              '#include <color_fragment>',
+              `
+              #include <color_fragment>
+              float d = distance(gl_FragColor.rgb, keyColor);
+              if (d < tolerance) {
+                discard;
+              }
+              `
+            );
+          };
+          material.needsUpdate = true;
+        });
+      }
+    });
+
     const micWrapper = document.getElementById('mic-wrapper');
     const micButton = document.getElementById('mic-button');
     const statusDiv = document.getElementById('status');
