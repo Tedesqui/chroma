@@ -33,8 +33,8 @@ fragmentShader: [
     'varying vec2 vUv;',
     'void main() {',
     '  vec4 texColor = texture2D(src, vUv);',
-    '  float diff = distance(texColor.rgb, vec3(0.0, 0.843, 0.0));',
-    '  if (diff < 0.05) {', // threshold reduzido, valor correto
+    '  float diff = distance(texColor.rgb, color);',
+    '  if (diff < threshold) {',
     '    discard;',
     '  } else {',
     '    gl_FragColor = texColor;',
