@@ -33,10 +33,12 @@ fragmentShader: [
     'varying vec2 vUv;',
     'void main() {',
     '  vec4 texColor = texture2D(src, vUv);',
-    '  vec3 keyColor = vec3(0.0, 1.0, 0.0);', // verde puro
-    '  float diff = distance(texColor.rgb, keyColor);',
-    '  float alpha = smoothstep(threshold - 0.1, threshold + 0.1, diff);',
-    '  gl_FragColor = vec4(texColor.rgb, alpha);',
+    '  float diff = distance(texColor.rgb, color.rgb);',
+    '  if (diff < threshold) {',
+    '    discard;',  // Remover o pixel verde
+    '  } else {',
+    '    gl_FragColor = texColor;',
+    '  }',
     '}'
 ].join('\n')
     });
