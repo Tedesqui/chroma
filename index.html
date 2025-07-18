@@ -15,7 +15,7 @@
       schema: {
         src: {type: 'map'},
         color: {type: 'color', default: 'green'},
-        threshold: {type: 'number', default: 0.45} // Ajuste este valor (entre 0.0 e 1.0) para a precisão do recorte
+        threshold: {type: 'number', default: 0.45}
       },
 
       vertexShader: [
@@ -26,7 +26,6 @@
         '}'
       ].join('\n'),
 
-      // Lógica do shader corrigida para usar o canal alfa corretamente
       fragmentShader: [
         'uniform sampler2D src;',
         'uniform vec3 color;',
@@ -38,7 +37,7 @@
         '  if (diff < threshold) {',
         '    gl_FragColor = vec4(texColor.rgb, 0.0);',
         '  } else {',
-        '    gl_FragColor = vec4(texColor.rgb, 1.0);',
+        '    gl_FragColor = texColor;',
         '  }',
         '}'
       ].join('\n')
@@ -69,8 +68,8 @@
         padding: 2.5px 10px;
         font-size: 16px;
     }
-    #playPauseButton span { 
-        color: #28a745; 
+    #playPauseButton span {
+        color: #28a745;
         line-height: 1;
     }
     #playPauseButton:not(.is-paused) span {
@@ -132,8 +131,8 @@
 <body style="margin: 0; overflow: hidden;">
   <button id="playPauseButton"><span>▶</span> Play</button>
 
-  <a-scene 
-    vr-mode-ui="enabled: false" 
+  <a-scene
+    vr-mode-ui="enabled: false"
     arjs="sourceType: webcam; gpsMinAccuracy: 50; gpsTimeInterval: 3000;"
   >
     <a-assets>
@@ -159,7 +158,7 @@
       </button>
   </div>
   <div id="recognized-text"></div>
-  
+
   <div id="text-input-container">
     <input type="text" id="text-input" placeholder="Ou digite o produto..." autocomplete="off">
     <button id="send-text-button">➤</button>
@@ -216,7 +215,7 @@
         if (videoSrcId) {
             return document.getElementById(videoSrcId);
         }
-        
+
         return null;
     }
 
@@ -280,7 +279,7 @@
         recognition.onresult = (event) => {
             const speechResult = event.results[0][0].transcript;
             console.log('Você disse:', speechResult.toLowerCase());
-            
+
             recognizedTextDiv.textContent = `"${speechResult}"`;
             recognizedTextDiv.style.display = 'block';
 
@@ -325,7 +324,7 @@
             isPlaying = true;
             updatePlayPauseButton();
         };
-        
+
         videoHolder.removeAttribute('material');
 
         if (command.includes('feijão') || command.includes('feijao')) {
@@ -343,7 +342,7 @@
             videoHolder.setAttribute('src', '#video_ofertas');
             playVideo(videoOfertas);
         }
-        
+
         if (videoTriggered) {
             newVideoPlayed = true;
         }
@@ -355,18 +354,18 @@
             video.currentTime = 0;
         });
     }
-    
+
     function pauseAllVideos() {
         allVideos.forEach(video => video.pause());
     }
 
     micButton.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        
+
         newVideoPlayed = false;
         const currentVideo = getCurrentVideo();
         lastPlayedVideo = currentVideo && !currentVideo.paused ? currentVideo : null;
-        
+
         if (isPlaying) {
             pauseAllVideos();
             isPlaying = false;
@@ -378,7 +377,7 @@
                 micWrapper.classList.add('recording');
                 statusDiv.style.display = 'block';
                 if(navigator.vibrate) navigator.vibrate(200);
-                
+
                 recognition.start();
                 recognizing = true;
             } catch(err) {
