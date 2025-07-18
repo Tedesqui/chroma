@@ -33,14 +33,10 @@ fragmentShader: [
     'varying vec2 vUv;',
     'void main() {',
     '  vec4 texColor = texture2D(src, vUv);',
-    '  float r = texColor.r;',
-    '  float g = texColor.g;',
-    '  float b = texColor.b;',
-    '  float alpha = 1.0;',
-    '  if (g > 0.6 && r < 0.5 && b < 0.5) {',
-    '    alpha = 0.0;',
-    '  }',
-    '  gl_FragColor = vec4(r, g, b, alpha);',
+    '  vec3 keyColor = vec3(0.0, 1.0, 0.0);', // verde puro
+    '  float diff = distance(texColor.rgb, keyColor);',
+    '  float alpha = smoothstep(threshold - 0.1, threshold + 0.1, diff);',
+    '  gl_FragColor = vec4(texColor.rgb, alpha);',
     '}'
 ].join('\n')
     });
@@ -147,7 +143,7 @@ fragmentShader: [
 
 <a-entity id="video-holder" position="0 1.7 -15"
   animation="property: position; to: 0 1.7 -10; dur: 1500; easing: easeOutElastic">
-  <a-video width="6" height="6" material="shader: chromakey; src: #video_inicial; color: #00FF00; transparent: true;"></a-video>
+  <a-video width="6" height="6" material="shader: chromakey; src: #video_inicial; color: #00FF00; threshold: 0.3; transparent: true;"></a-video>
 </a-entity>
   </a-scene>
 
