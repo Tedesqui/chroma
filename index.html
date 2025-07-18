@@ -147,7 +147,7 @@
           const material = mesh.material;
           // Cor a ser removida (verde padrão). Altere se o fundo do seu vídeo for outra cor.
           const keyColor = new THREE.Color(0x00FF00); 
-          // Tolerância da cor (0.0 a 1.0). Ajuste para remover mais ou menos tons da cor.
+          // Tolerância da cor (0.0 a 5.0). Ajuste para remover mais ou menos tons da cor.
           const tolerance = 0.4; 
 
           material.onBeforeCompile = (shader) => {
