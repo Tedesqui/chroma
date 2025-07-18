@@ -26,21 +26,21 @@
         '}'
       ].join('\n'),
 
-      fragmentShader: [
-        'uniform sampler2D src;',
-        'uniform vec3 color;',
-        'uniform float threshold;',
-        'varying vec2 vUv;',
-        'void main() {',
-        '  vec4 texColor = texture2D(src, vUv);',
-        '  float diff = distance(texColor.rgb, color.rgb);',
-        '  if (diff < threshold) {',
-        '    gl_FragColor = vec4(texColor.rgb, 0.0);',
-        '  } else {',
-        '    gl_FragColor = texColor;',
-        '  }',
-        '}'
-      ].join('\n')
+fragmentShader: [
+    'uniform sampler2D src;',
+    'uniform vec3 color;',
+    'uniform float threshold;',
+    'varying vec2 vUv;',
+    'void main() {',
+    '  vec4 texColor = texture2D(src, vUv);',
+    '  float diff = distance(texColor.rgb, color.rgb);',
+    '  if (diff < threshold) {',
+    '    gl_FragColor = vec4(texColor.rgb, 0.0);',
+    '  } else {',
+    '    gl_FragColor = vec4(texColor.rgb, texColor.a);',
+    '  }',
+    '}'
+].join('\n')
     });
   </script>
 
