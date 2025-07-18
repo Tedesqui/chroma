@@ -15,7 +15,7 @@
       schema: {
         src: {type: 'map'},
         color: {type: 'color', default: 'green'},
-        threshold: {type: 'number', default: 0.45}
+        threshold: {type: 'number', default: 0.4} // Ajuste se necessário
       },
 
       vertexShader: [
@@ -26,6 +26,7 @@
         '}'
       ].join('\n'),
 
+      // Lógica do shader alterada para usar o canal alfa
       fragmentShader: [
         'uniform sampler2D src;',
         'uniform vec3 color;',
@@ -34,10 +35,11 @@
         'void main() {',
         '  vec4 texColor = texture2D(src, vUv);',
         '  float diff = distance(texColor.rgb, color.rgb);',
+        '  float alpha = 1.0;',
         '  if (diff < threshold) {',
-        '    discard;',
+        '    alpha = 0.0;',
         '  }',
-        '  gl_FragColor = texColor;',
+        '  gl_FragColor = vec4(texColor.rgb, alpha);',
         '}'
       ].join('\n')
     });
@@ -60,22 +62,22 @@
         align-items: center;
     }
     #playPauseButton:not(.is-paused) {
-        padding: 2.5 10px; /* Altura do botão Play reduzida */
-        font-size: 16px; /* Tamanho da fonte do texto Play reduzido em 50% */
+        padding: 2.5 10px;
+        font-size: 16px;
     }
     #playPauseButton.is-paused {
-        padding: 2.5px 10px; /* Tamanho do botão Pause reduzido em 50% */
-        font-size: 16px; /* Tamanho da fonte do texto Pause reduzido em 50% */
+        padding: 2.5px 10px;
+        font-size: 16px;
     }
     #playPauseButton span { 
         color: #28a745; 
         line-height: 1;
     }
     #playPauseButton:not(.is-paused) span {
-        font-size: 3em; /* Ícone de Play reduzido em 50% */
+        font-size: 3em;
     }
     #playPauseButton.is-paused span {
-        font-size: 1.6em; /* Ícone de Pause reduzido em 50% */
+        font-size: 1.6em;
     }
     #playPauseButton.rotating{transform:rotate(360deg)}
     #playPauseButton:hover{transform:scale(1.05)}
@@ -144,7 +146,7 @@
 
 <a-entity id="video-holder" position="0 1.7 -15"
   animation="property: position; to: 0 1.7 -10; dur: 1500; easing: easeOutElastic">
-  <a-video width="6" height="6" material="shader: chromakey; src: #video_inicial; color: #00FF00; threshold: 0.2;"></a-video>
+  <a-video width="6" height="6" material="shader: chromakey; src: #video_inicial; color: #00FF00; threshold: 0.4; transparent: true;"></a-video>
 </a-entity>
   </a-scene>
 
