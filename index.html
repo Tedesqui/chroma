@@ -9,7 +9,39 @@
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.0/aframe/build/aframe-ar-nft.js"></script>
   <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
   <script src="https://unpkg.com/aframe-gps-entity-place@1.8.0/dist/aframe-gps-entity-place.min.js"></script>
-  <script src="https://unpkg.com/aframe-chromakey-material/dist/aframe-chromakey-material.min.js"></script>
+
+  <script>
+    AFRAME.registerShader('chromakey', {
+      schema: {
+        src: {type: 'map'},
+        color: {type: 'color', default: 'green'},
+        threshold: {type: 'number', default: 0.45} // Ajuste este valor (0.0 a 1.0) para melhorar a qualidade do recorte
+      },
+
+      vertexShader: [
+        'varying vec2 vUv;',
+        'void main() {',
+        '  vUv = uv;',
+        '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+        '}'
+      ].join('\n'),
+
+      fragmentShader: [
+        'uniform sampler2D src;',
+        'uniform vec3 color;',
+        'uniform float threshold;',
+        'varying vec2 vUv;',
+        'void main() {',
+        '  vec4 texColor = texture2D(src, vUv);',
+        '  float diff = distance(texColor.rgb, color.rgb);',
+        '  if (diff < threshold) {',
+        '    discard;',
+        '  }',
+        '  gl_FragColor = texColor;',
+        '}'
+      ].join('\n')
+    });
+  </script>
 
   <style>
     body{margin:0}
@@ -112,7 +144,7 @@
 
 <a-entity id="video-holder" position="0 1.7 -15"
   animation="property: position; to: 0 1.7 -10; dur: 1500; easing: easeOutElastic">
-  <a-video width="6" height="6" material="shader: chromakey; src: #video_inicial; color: #00FF00;"></a-video>
+  <a-video width="6" height="6" material="shader: chromakey; src: #video_inicial; color: #00FF00; transparent: true;"></a-video>
 </a-entity>
   </a-scene>
 
@@ -162,8 +194,12 @@
     const videoPlayCounts = new Map();
 
     function getCurrentVideo() {
-        const currentVideoSrcId = videoHolder.getAttribute('material').src.substring(1);
-        return document.getElementById(currentVideoSrcId);
+        const currentVideoSrc = videoHolder.getAttribute('material').src;
+        if (typeof currentVideoSrc === 'string') {
+            const currentVideoSrcId = currentVideoSrc.substring(1);
+            return document.getElementById(currentVideoSrcId);
+        }
+        return null;
     }
 
     function updatePlayPauseButton() {
@@ -271,20 +307,23 @@
             isPlaying = true;
             updatePlayPauseButton();
         };
+        
+        // Remove o chroma key dos outros vídeos para garantir que eles apareçam normalmente
+        videoHolder.removeAttribute('material');
 
         if (command.includes('feijão') || command.includes('feijao')) {
-            videoHolder.setAttribute('material', 'src', '#video_feijao');
+            videoHolder.setAttribute('src', '#video_feijao');
             playVideo(videoFeijao);
         } else if (command.includes('açúcar') || command.includes('acucar')) {
-            videoHolder.setAttribute('material', 'src', '#video_acucar');
+            videoHolder.setAttribute('src', '#video_acucar');
             playVideo(videoAcucar);
         } else if (command.includes('chocolate')) {
-            videoHolder.setAttribute('material', 'src', '#video_chocolate');
+            videoHolder.setAttribute('src', '#video_chocolate');
             playVideo(videoChocolate);
         } else if (command.includes('ofertas') || command.includes('oferta')) {
             videoHolder.setAttribute('width', '6');
             videoHolder.setAttribute('height', '6');
-            videoHolder.setAttribute('material', 'src', '#video_ofertas');
+            videoHolder.setAttribute('src', '#video_ofertas');
             playVideo(videoOfertas);
         }
         
@@ -363,3 +402,4 @@
   </script>
 </body>
 </html>
+
