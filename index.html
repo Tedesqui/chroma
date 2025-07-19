@@ -253,9 +253,19 @@
         updatePlayPauseButton();
     });
 
+    // Bloco de código modificado para a repetição do vídeo
     allVideos.forEach(video => {
         videoPlayCounts.set(video.id, 0);
         video.addEventListener('ended', () => {
+            // **CORREÇÃO APLICADA AQUI**
+            // Se o vídeo que terminou é o 'video_inicial', ele não irá repetir.
+            if (video.id === 'video_inicial') {
+                isPlaying = false;
+                updatePlayPauseButton();
+                return; // Impede a repetição
+            }
+
+            // Para todos os outros vídeos, a lógica de repetição continua a mesma
             let count = videoPlayCounts.get(video.id) || 0;
             if (count < 2) {
                 count++;
