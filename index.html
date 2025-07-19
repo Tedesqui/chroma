@@ -12,6 +12,22 @@
 
   <style>
     body{margin:0}
+    /* Estilo para a mensagem inicial */
+    #initial-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2000;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 18px;
+        max-width: 80%;
+        font-family: sans-serif;
+    }
     #playPauseButton{
         position:fixed;
         top:20px;
@@ -95,6 +111,8 @@
 </head>
 
 <body style="margin: 0; overflow: hidden;">
+  <div id="initial-message">Aponte seu celular para frente para ver a IA, em seguida clique em Play</div>
+
   <button id="playPauseButton"><span>▶</span> Play</button>
 
   <a-scene 
@@ -153,6 +171,16 @@
   </div>
 
   <script>
+    // Lógica para esconder a mensagem inicial após 5 segundos
+    window.addEventListener('load', () => {
+        const initialMessage = document.getElementById('initial-message');
+        if (initialMessage) {
+            setTimeout(() => {
+                initialMessage.style.display = 'none';
+            }, 5000); // 5000 milissegundos = 5 segundos
+        }
+    });
+
     const micWrapper = document.getElementById('mic-wrapper');
     const micButton = document.getElementById('mic-button');
     const statusDiv = document.getElementById('status');
@@ -312,7 +340,7 @@
             videoOfertasEntity.setAttribute('visible', 'true');
             currentVideoElement = videoOfertas;
             playVideo(videoOfertas);
-        } else if (command.includes('início') || command.includes('inicio')) { // Adicionado comando para voltar ao início
+        } else if (command.includes('início') || command.includes('inicio')) {
             videoInicialEntity.setAttribute('visible', 'true');
             currentVideoElement = initialVideo;
             playVideo(initialVideo);
