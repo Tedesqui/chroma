@@ -102,36 +102,31 @@
     arjs="sourceType: webcam; gpsMinAccuracy: 50; gpsTimeInterval: 3000;"
   >
     <a-assets>
-      <video id="video_chocolate" src="videos/chocolate.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
-      <video id="video_acucar" src="videos/acucar.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
-      <video id="video_feijao" src="videos/feijao.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_chocolate" src="videos/chocolate.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_acucar" src="videos/acucar.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_feijao" src="videos/feijao.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_inicial" src="https://tedesqui.github.io/inicio/inicio.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_ofertas" src="videos/ofertas.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
     </a-assets>
 
-  <a-entity id="video-holder" position="0 -1 -15"
-  animation="property: position; to: 0 -1 -10; dur: 1500; easing: easeOutElastic">
-      <a-video src="#video_inicial" width="10" height="10"></a-video>
+    <a-entity id="video-inicial-entity" position="0 1.7 -10" visible="true">
+      <a-video src="#video_inicial" width="6" height="6"></a-video>
     </a-entity>
 
-   <a-entity id="video-holder" position="0 0.5 -15" visible="false"  
-     animation="property: position; to: 0 0.5 -10; dur: 1500; easing: easeOutElastic">
-      <a-video src="#video_chocolate" width="6" height="6"></a-video>
+    <a-entity id="video-chocolate-entity" position="8 -1 -10" rotation="0 -30 0" visible="false">
+      <a-video src="#video_chocolate" width="7" height="7"></a-video>
     </a-entity>
 
-   <a-entity id="video-holder" position="0 0.5 -15" visible="false"  
-     animation="property: position; to: 0 0.5 -10; dur: 1500; easing: easeOutElastic">
-      <a-video src="#video_acucar" width="6" height="6"></a-video>
+    <a-entity id="video-acucar-entity" position="-8 -1 -10" rotation="0 30 0" visible="false">
+      <a-video src="#video_acucar" width="7" height="7"></a-video>
     </a-entity>
 
-   <a-entity id="video-holder" position="0 0.5 -15" visible="false"  
-     animation="property: position; to: 0 0.5 -10; dur: 1500; easing: easeOutElastic">
-      <a-video src="#video_feijao" width="6" height="6"></a-video>
+    <a-entity id="video-feijao-entity" position="0 -1 -10" visible="false">
+      <a-video src="#video_feijao" width="7" height="7"></a-video>
     </a-entity>
 
-   <a-entity id="video-holder" position="0 1.7 -15" visible="false"  
-     animation="property: position; to: 0 1.7 -10; dur: 1500; easing: easeOutElastic">
-      <a-video src="#video_ofertas" width="6" height="6"></a-video>
+    <a-entity id="video-ofertas-entity" position="0 1.7 -15" visible="false">
+      <a-video src="#video_ofertas" width="8" height="8"></a-video>
     </a-entity>
 
   </a-scene>
@@ -317,6 +312,10 @@
             videoOfertasEntity.setAttribute('visible', 'true');
             currentVideoElement = videoOfertas;
             playVideo(videoOfertas);
+        } else if (command.includes('início') || command.includes('inicio')) { // Adicionado comando para voltar ao início
+            videoInicialEntity.setAttribute('visible', 'true');
+            currentVideoElement = initialVideo;
+            playVideo(initialVideo);
         }
         
         if (videoTriggered) {
