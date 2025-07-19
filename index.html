@@ -27,22 +27,22 @@
         align-items: center;
     }
     #playPauseButton:not(.is-paused) {
-        padding: 2.5 10px; /* Altura do botão Play reduzida */
-        font-size: 16px; /* Tamanho da fonte do texto Play reduzido em 50% */
+        padding: 2.5 10px;
+        font-size: 16px;
     }
     #playPauseButton.is-paused {
-        padding: 2.5px 10px; /* Tamanho do botão Pause reduzido em 50% */
-        font-size: 16px; /* Tamanho da fonte do texto Pause reduzido em 50% */
+        padding: 2.5px 10px;
+        font-size: 16px;
     }
     #playPauseButton span { 
         color: #28a745; 
         line-height: 1;
     }
     #playPauseButton:not(.is-paused) span {
-        font-size: 3em; /* Ícone de Play reduzido em 50% */
+        font-size: 3em;
     }
     #playPauseButton.is-paused span {
-        font-size: 1.6em; /* Ícone de Pause reduzido em 50% */
+        font-size: 1.6em;
     }
     #playPauseButton.rotating{transform:rotate(360deg)}
     #playPauseButton:hover{transform:scale(1.05)}
@@ -102,17 +102,38 @@
     arjs="sourceType: webcam; gpsMinAccuracy: 50; gpsTimeInterval: 3000;"
   >
     <a-assets>
-      <video id="video_chocolate" src="videos/chocolate.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
-      <video id="video_acucar" src="videos/acucar.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
-      <video id="video_feijao" src="videos/feijao.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_chocolate" src="videos/chocolate.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_acucar" src="videos/acucar.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_feijao" src="videos/feijao.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_inicial" src="videos/inicio.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_ofertas" src="videos/ofertas.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
     </a-assets>
 
-<a-entity id="video-holder" position="0 1.7 -15"
-  animation="property: position; to: 0 1.7 -10; dur: 1500; easing: easeOutElastic">
-  <a-video width="6" height="6" src="#video_inicial" color="#FFFFFF"></a-video>
-</a-entity>
+  <a-entity id="video-holder" position="0 0.5 -15"
+  animation="property: position; to: 0 0.5 -10; dur: 1500; easing: easeOutElastic">
+      <a-video src="#video_inicial" width="6" height="6"></a-video>
+    </a-entity>
+
+   <a-entity id="video-holder" position="0 0.5 -15" visible="false"  
+     animation="property: position; to: 0 0.5 -10; dur: 1500; easing: easeOutElastic">
+      <a-video src="#video_chocolate" width="6" height="6"></a-video>
+    </a-entity>
+
+   <a-entity id="video-holder" position="0 0.5 -15" visible="false"  
+     animation="property: position; to: 0 0.5 -10; dur: 1500; easing: easeOutElastic">
+      <a-video src="#video_acucar" width="6" height="6"></a-video>
+    </a-entity>
+
+   <a-entity id="video-holder" position="0 0.5 -15" visible="false"  
+     animation="property: position; to: 0 0.5 -10; dur: 1500; easing: easeOutElastic">
+      <a-video src="#video_feijao" width="6" height="6"></a-video>
+    </a-entity>
+
+   <a-entity id="video-holder" position="0 1.7 -15" visible="false"  
+     animation="property: position; to: 0 1.7 -10; dur: 1500; easing: easeOutElastic">
+      <a-video src="#video_ofertas" width="6" height="6"></a-video>
+    </a-entity>
+
   </a-scene>
 
   <div id="status">Ouvindo...</div>
@@ -141,17 +162,25 @@
     const micButton = document.getElementById('mic-button');
     const statusDiv = document.getElementById('status');
     const playPauseButton = document.getElementById('playPauseButton');
-    const initialVideo = document.querySelector('#video_inicial');
-    const videoHolder = document.querySelector('#video-holder a-video');
     const recognizedTextDiv = document.getElementById('recognized-text');
     const textInput = document.getElementById('text-input');
     const sendTextButton = document.getElementById('send-text-button');
 
+    // Referências para os elementos de vídeo
+    const initialVideo = document.querySelector('#video_inicial');
     const videoFeijao = document.querySelector('#video_feijao');
     const videoAcucar = document.querySelector('#video_acucar');
     const videoChocolate = document.querySelector('#video_chocolate');
     const videoOfertas = document.querySelector('#video_ofertas');
     const allVideos = [initialVideo, videoFeijao, videoAcucar, videoChocolate, videoOfertas];
+
+    // Referências para as entidades que contêm os vídeos
+    const videoInicialEntity = document.querySelector('#video-inicial-entity');
+    const videoFeijaoEntity = document.querySelector('#video-feijao-entity');
+    const videoAcucarEntity = document.querySelector('#video-acucar-entity');
+    const videoChocolateEntity = document.querySelector('#video-chocolate-entity');
+    const videoOfertasEntity = document.querySelector('#video-ofertas-entity');
+    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoAcucarEntity, videoChocolateEntity, videoOfertasEntity];
 
     let isPlaying = false;
     let recognition;
@@ -159,10 +188,10 @@
     let lastPlayedVideo = null;
     let newVideoPlayed = false;
     const videoPlayCounts = new Map();
+    let currentVideoElement = initialVideo; // Inicia com o vídeo principal
 
     function getCurrentVideo() {
-        const currentVideoSrcId = videoHolder.getAttribute('src').substring(1);
-        return document.getElementById(currentVideoSrcId);
+        return currentVideoElement; // Retorna o vídeo atualmente ativo
     }
 
     function updatePlayPauseButton() {
@@ -260,8 +289,9 @@
     function handleSpeechCommand(command) {
         let videoTriggered = false;
         stopAllVideos();
-        videoHolder.setAttribute('width', '6');
-        videoHolder.setAttribute('height', '6');
+        
+        // Oculta todas as entidades de vídeo
+        allVideoEntities.forEach(entity => entity.setAttribute('visible', 'false'));
 
         const playVideo = (videoElement) => {
             videoPlayCounts.set(videoElement.id, 1);
@@ -272,18 +302,20 @@
         };
 
         if (command.includes('feijão') || command.includes('feijao')) {
-            videoHolder.setAttribute('src', '#video_feijao');
+            videoFeijaoEntity.setAttribute('visible', 'true');
+            currentVideoElement = videoFeijao;
             playVideo(videoFeijao);
         } else if (command.includes('açúcar') || command.includes('acucar')) {
-            videoHolder.setAttribute('src', '#video_acucar');
+            videoAcucarEntity.setAttribute('visible', 'true');
+            currentVideoElement = videoAcucar;
             playVideo(videoAcucar);
         } else if (command.includes('chocolate')) {
-            videoHolder.setAttribute('src', '#video_chocolate');
+            videoChocolateEntity.setAttribute('visible', 'true');
+            currentVideoElement = videoChocolate;
             playVideo(videoChocolate);
         } else if (command.includes('ofertas') || command.includes('oferta')) {
-            videoHolder.setAttribute('width', '8');
-            videoHolder.setAttribute('height', '8');
-            videoHolder.setAttribute('src', '#video_ofertas');
+            videoOfertasEntity.setAttribute('visible', 'true');
+            currentVideoElement = videoOfertas;
             playVideo(videoOfertas);
         }
         
