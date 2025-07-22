@@ -30,8 +30,8 @@
     }
     #playPauseButton{
         position:fixed;
-        top:18px;
-        left:23px;
+        top:15px;
+        left:28px;
         z-index:1000;
         background-color:rgba(0,0,0,0.55);
         color:white;
@@ -122,7 +122,8 @@
     <a-assets>
       <video id="video_chocolate" src="videos/chocolate.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_acucar" src="videos/acucar.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
-      <video id="video_feijao" src="https://www.youtube.com/watch?v=vh972J51-ew" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_feijao" src="videos/feijao.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_feijao2" src="videos/feijao2.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_inicial" src="videos/inicio.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_ofertas" src="videos/ofertas.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
     </a-assets>
@@ -143,6 +144,10 @@
 
     <a-entity id="video-feijao-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
       <a-video src="#video_feijao" width="20" height="5"></a-video>
+    </a-entity>
+
+    <a-entity id="video-feijao2-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
+      <a-video src="#video_feijao2" width="20" height="5"></a-video>
     </a-entity>
 
     <a-entity id="video-ofertas-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
@@ -194,18 +199,20 @@
     // Referências para os elementos de vídeo
     const initialVideo = document.querySelector('#video_inicial');
     const videoFeijao = document.querySelector('#video_feijao');
+    const videoFeijao2 = document.querySelector('#video_feijao2');
     const videoAcucar = document.querySelector('#video_acucar');
     const videoChocolate = document.querySelector('#video_chocolate');
     const videoOfertas = document.querySelector('#video_ofertas');
-    const allVideos = [initialVideo, videoFeijao, videoAcucar, videoChocolate, videoOfertas];
+    const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoAcucar, videoChocolate, videoOfertas];
 
     // Referências para as entidades que contêm os vídeos
     const videoInicialEntity = document.querySelector('#video-inicial-entity');
     const videoFeijaoEntity = document.querySelector('#video-feijao-entity');
+    const videoFeijao2Entity = document.querySelector('#video-feijao2-entity');
     const videoAcucarEntity = document.querySelector('#video-acucar-entity');
     const videoChocolateEntity = document.querySelector('#video-chocolate-entity');
     const videoOfertasEntity = document.querySelector('#video-ofertas-entity');
-    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoAcucarEntity, videoChocolateEntity, videoOfertasEntity];
+    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoFeijao2Entity, videoAcucarEntity, videoChocolateEntity, videoOfertasEntity];
 
     let isPlaying = false;
     let recognition;
@@ -253,19 +260,27 @@
         updatePlayPauseButton();
     });
 
-    // Bloco de código modificado para a repetição do vídeo
+    // Bloco de código modificado para a repetição e transição de vídeos
     allVideos.forEach(video => {
         videoPlayCounts.set(video.id, 0);
         video.addEventListener('ended', () => {
-            // **CORREÇÃO APLICADA AQUI**
-            // Se o vídeo que terminou é o 'video_inicial', ele não irá repetir.
+            // Caso especial: ao terminar video_feijao, toca video_feijao2
+            if (video.id === 'video_feijao') {
+                videoFeijaoEntity.setAttribute('visible', 'false');
+                videoFeijao2Entity.setAttribute('visible', 'true');
+                currentVideoElement = videoFeijao2;
+                videoFeijao2.play();
+                return; // Sai da função para não aplicar a lógica de repetição padrão
+            }
+            
+            // Caso especial: vídeo inicial não repete
             if (video.id === 'video_inicial') {
                 isPlaying = false;
                 updatePlayPauseButton();
-                return; // Impede a repetição
+                return;
             }
 
-            // Para todos os outros vídeos, a lógica de repetição continua a mesma
+            // Lógica de repetição padrão para os outros vídeos
             let count = videoPlayCounts.get(video.id) || 0;
             if (count < 2) {
                 count++;
