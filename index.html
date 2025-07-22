@@ -30,8 +30,8 @@
     }
     #playPauseButton{
         position:fixed;
-        top:15px;
-        left:28px;
+        top:20px;
+        left:20px;
         z-index:1000;
         background-color:rgba(0,0,0,0.55);
         color:white;
@@ -122,8 +122,9 @@
     <a-assets>
       <video id="video_chocolate" src="videos/chocolate.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_acucar" src="videos/acucar.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
-      <video id="video_feijao" src="videos/feijao.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_feijao" src="https://www.youtube.com/watch?v=vh972J51-ew" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_feijao2" src="videos/feijao2.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_feijao3" src="videos/feijao3.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_inicial" src="videos/inicio.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_ofertas" src="videos/ofertas.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
     </a-assets>
@@ -148,6 +149,10 @@
 
     <a-entity id="video-feijao2-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
       <a-video src="#video_feijao2" width="20" height="5"></a-video>
+    </a-entity>
+    
+    <a-entity id="video-feijao3-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
+      <a-video src="#video_feijao3" width="20" height="5"></a-video>
     </a-entity>
 
     <a-entity id="video-ofertas-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
@@ -200,19 +205,21 @@
     const initialVideo = document.querySelector('#video_inicial');
     const videoFeijao = document.querySelector('#video_feijao');
     const videoFeijao2 = document.querySelector('#video_feijao2');
+    const videoFeijao3 = document.querySelector('#video_feijao3');
     const videoAcucar = document.querySelector('#video_acucar');
     const videoChocolate = document.querySelector('#video_chocolate');
     const videoOfertas = document.querySelector('#video_ofertas');
-    const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoAcucar, videoChocolate, videoOfertas];
+    const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoFeijao3, videoAcucar, videoChocolate, videoOfertas];
 
     // Referências para as entidades que contêm os vídeos
     const videoInicialEntity = document.querySelector('#video-inicial-entity');
     const videoFeijaoEntity = document.querySelector('#video-feijao-entity');
     const videoFeijao2Entity = document.querySelector('#video-feijao2-entity');
+    const videoFeijao3Entity = document.querySelector('#video-feijao3-entity');
     const videoAcucarEntity = document.querySelector('#video-acucar-entity');
     const videoChocolateEntity = document.querySelector('#video-chocolate-entity');
     const videoOfertasEntity = document.querySelector('#video-ofertas-entity');
-    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoFeijao2Entity, videoAcucarEntity, videoChocolateEntity, videoOfertasEntity];
+    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoFeijao2Entity, videoFeijao3Entity, videoAcucarEntity, videoChocolateEntity, videoOfertasEntity];
 
     let isPlaying = false;
     let recognition;
@@ -270,7 +277,16 @@
                 videoFeijao2Entity.setAttribute('visible', 'true');
                 currentVideoElement = videoFeijao2;
                 videoFeijao2.play();
-                return; // Sai da função para não aplicar a lógica de repetição padrão
+                return; 
+            }
+            
+            // Caso especial: ao terminar video_feijao2, toca video_feijao3
+            if (video.id === 'video_feijao2') {
+                videoFeijao2Entity.setAttribute('visible', 'false');
+                videoFeijao3Entity.setAttribute('visible', 'true');
+                currentVideoElement = videoFeijao3;
+                videoFeijao3.play();
+                return;
             }
             
             // Caso especial: vídeo inicial não repete
