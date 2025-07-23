@@ -122,6 +122,8 @@
     <a-assets>
       <video id="video_chocolate" src="videos/chocolate.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_acucar" src="videos/acucar.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_acucar2" src="videos/acucar2.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_acucar3" src="videos/acucar3.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_feijao" src="videos/feijao.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_feijao2" src="videos/feijao2.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_feijao3" src="videos/feijao3.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
@@ -140,8 +142,16 @@
       <a-video src="#video_chocolate" width="7" height="7"></a-video>
     </a-entity>
 
-    <a-entity id="video-acucar-entity" position="0 -1 -8" visible="false" look-at="[camera]">
-      <a-video src="#video_acucar" width="7" height="7"></a-video>
+    <a-entity id="video-acucar-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
+      <a-video src="#video_acucar" width="20" height="5"></a-video>
+    </a-entity>
+
+    <a-entity id="video-acucar2-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
+        <a-video src="#video_acucar2" width="20" height="5"></a-video>
+    </a-entity>
+
+    <a-entity id="video-acucar3-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
+        <a-video src="#video_acucar3" width="20" height="5"></a-video>
     </a-entity>
 
     <a-entity id="video-feijao-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
@@ -213,9 +223,11 @@
     const videoFeijao3 = document.querySelector('#video_feijao3');
     const videoFeijao4 = document.querySelector('#video_feijao4');
     const videoAcucar = document.querySelector('#video_acucar');
+    const videoAcucar2 = document.querySelector('#video_acucar2');
+    const videoAcucar3 = document.querySelector('#video_acucar3');
     const videoChocolate = document.querySelector('#video_chocolate');
     const videoOfertas = document.querySelector('#video_ofertas');
-    const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoFeijao3, videoFeijao4, videoAcucar, videoChocolate, videoOfertas];
+    const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoFeijao3, videoFeijao4, videoAcucar, videoAcucar2, videoAcucar3, videoChocolate, videoOfertas];
 
     // Referências para as entidades que contêm os vídeos
     const videoInicialEntity = document.querySelector('#video-inicial-entity');
@@ -224,9 +236,11 @@
     const videoFeijao3Entity = document.querySelector('#video-feijao3-entity');
     const videoFeijao4Entity = document.querySelector('#video-feijao4-entity');
     const videoAcucarEntity = document.querySelector('#video-acucar-entity');
+    const videoAcucar2Entity = document.querySelector('#video-acucar2-entity');
+    const videoAcucar3Entity = document.querySelector('#video-acucar3-entity');
     const videoChocolateEntity = document.querySelector('#video-chocolate-entity');
     const videoOfertasEntity = document.querySelector('#video-ofertas-entity');
-    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoFeijao2Entity, videoFeijao3Entity, videoFeijao4Entity, videoAcucarEntity, videoChocolateEntity, videoOfertasEntity];
+    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoFeijao2Entity, videoFeijao3Entity, videoFeijao4Entity, videoAcucarEntity, videoAcucar2Entity, videoAcucar3Entity, videoChocolateEntity, videoOfertasEntity];
 
     let isPlaying = false;
     let recognition;
@@ -278,6 +292,24 @@
     allVideos.forEach(video => {
         videoPlayCounts.set(video.id, 0);
         video.addEventListener('ended', () => {
+            // Caso especial: ao terminar video_acucar, toca video_acucar2
+            if (video.id === 'video_acucar') {
+                videoAcucarEntity.setAttribute('visible', 'false');
+                videoAcucar2Entity.setAttribute('visible', 'true');
+                currentVideoElement = videoAcucar2;
+                videoAcucar2.play();
+                return;
+            }
+
+            // Caso especial: ao terminar video_acucar2, toca video_acucar3
+            if (video.id === 'video_acucar2') {
+                videoAcucar2Entity.setAttribute('visible', 'false');
+                videoAcucar3Entity.setAttribute('visible', 'true');
+                currentVideoElement = videoAcucar3;
+                videoAcucar3.play();
+                return;
+            }
+            
             // Caso especial: ao terminar video_feijao, toca video_feijao2
             if (video.id === 'video_feijao') {
                 videoFeijaoEntity.setAttribute('visible', 'false');
@@ -387,7 +419,7 @@
             videoFeijaoEntity.setAttribute('visible', 'true');
             currentVideoElement = videoFeijao;
             playVideo(videoFeijao);
-        } else if (command.includes('açúcar') || command.includes('acucar')) {
+        } else if (command.includes('38') || command.includes('trinta e oito')) {
             videoAcucarEntity.setAttribute('visible', 'true');
             currentVideoElement = videoAcucar;
             playVideo(videoAcucar);
