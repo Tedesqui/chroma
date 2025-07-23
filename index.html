@@ -121,7 +121,7 @@
   >
     <a-assets>
       <video id="video_chocolate" src="videos/chocolate.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
-      <video id="video_acucar" src="videos/acucar.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_acucar" src="videos/acucar.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_feijao" src="videos/feijao.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_feijao2" src="videos/feijao2.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_feijao3" src="videos/feijao3.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
@@ -383,7 +383,7 @@
             updatePlayPauseButton();
         };
 
-        if (command.includes('34 T-Top') || command.includes('34')) {
+        if (command.includes('Top') || command.includes('34')) {
             videoFeijaoEntity.setAttribute('visible', 'true');
             currentVideoElement = videoFeijao;
             playVideo(videoFeijao);
