@@ -81,7 +81,14 @@
 
 <script>
     // --- Lógica inicial e referências de elementos ---
-    window.addEventListener('load', () => { /* ... */ });
+    window.addEventListener('load', () => {
+        const initialMessage = document.getElementById('initial-message');
+        if (initialMessage) {
+            // A mensagem inicial já desaparece após 5 segundos
+            setTimeout(() => { initialMessage.style.display = 'none'; }, 5000);
+        }
+    });
+
     const micWrapper = document.getElementById('mic-wrapper');
     const micButton = document.getElementById('mic-button');
     const statusDiv = document.getElementById('status');
@@ -143,10 +150,9 @@
         updatePlayPauseButton();
     });
 
-    document.querySelector('a-scene').addEventListener('loaded', () => { /* ... */ });
-    allVideos.forEach(video => { /* ... */ });
+    document.querySelector('a-scene').addEventListener('loaded', () => { isPlaying = false; updatePlayPauseButton(); });
+    allVideos.forEach(video => { /* ... (lógica 'ended' omitida para clareza) */ });
 
-    // --- LÓGICA DE RECONHECIMENTO DE VOZ OTIMIZADA ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
@@ -171,13 +177,7 @@
             recognizing = false;
         };
 
-        recognition.onend = () => {
-            if (recognizing) {
-                recognizing = false;
-                micWrapper.classList.remove('recording');
-                statusDiv.style.display = 'none';
-            }
-        };
+        recognition.onend = () => { if (recognizing) { recognizing = false; micWrapper.classList.remove('recording'); statusDiv.style.display = 'none'; } };
 
         micButton.addEventListener('touchstart', (e) => { e.preventDefault(); if(recognizing) return; try { micWrapper.classList.add('recording'); recognition.start(); recognizing = true; } catch (err) { console.error("Erro ao chamar recognition.start():", err); statusDiv.textContent = 'Erro ao iniciar.'; micWrapper.classList.remove('recording'); }});
         micButton.addEventListener('touchend', (e) => { e.preventDefault(); if(recognizing) { recognition.stop(); }});
@@ -187,7 +187,6 @@
         if (statusDiv) { statusDiv.textContent = 'Comando de voz não suportado.'; statusDiv.style.display = 'block'; }
     }
 
-    // --- FUNÇÕES DE CONTROLE (COM LÓGICA CORRIGIDA) ---
     function stopAllVideos() {
         allVideos.forEach(video => {
             if (video && typeof video.pause === 'function') {
@@ -195,52 +194,37 @@
                 video.currentTime = 0;
             }
         });
-        // ALTERAÇÃO: Garante que o estado de reprodução seja 'false' e atualiza o botão.
         isPlaying = false;
         updatePlayPauseButton();
     }
 
-    // ALTERAÇÃO: Lógica principal de comando de voz reescrita.
     function handleSpeechCommand(command) {
-        // Para todos os vídeos e esconde todas as entidades
         stopAllVideos();
         allVideoEntities.forEach(entity => entity.setAttribute('visible', 'false'));
 
         let targetVideo = null;
         let targetEntity = null;
 
-        // Mapeia o comando para o vídeo e entidade correspondentes
-        if (command.includes('top') || command.includes('34')) {
-            targetEntity = videoFeijaoEntity;
-            targetVideo = videoFeijao;
-        } else if (command.includes('38') || command.includes('ht')) {
-            targetEntity = videoAcucarEntity;
-            targetVideo = videoAcucar;
-        } else if (command.includes('chocolate')) {
-            targetEntity = videoChocolateEntity;
-            targetVideo = videoChocolate;
-        } else if (command.includes('quero') || command.includes('sim')) {
-            targetEntity = videoOfertasEntity;
-            targetVideo = videoOfertas;
-        } else if (command.includes('início') || command.includes('inicio')) {
-            targetEntity = videoInicialEntity;
-            targetVideo = initialVideo;
-        }
+        if (command.includes('top') || command.includes('34')) { targetEntity = videoFeijaoEntity; targetVideo = videoFeijao; }
+        else if (command.includes('38') || command.includes('ht')) { targetEntity = videoAcucarEntity; targetVideo = videoAcucar; }
+        else if (command.includes('chocolate')) { targetEntity = videoChocolateEntity; targetVideo = videoChocolate; }
+        else if (command.includes('quero') || command.includes('sim')) { targetEntity = videoOfertasEntity; targetVideo = videoOfertas; }
+        else if (command.includes('início') || command.includes('inicio')) { targetEntity = videoInicialEntity; targetVideo = initialVideo; }
 
-        // Se um comando válido foi dado...
         if (targetEntity && targetVideo) {
             recognizedTextDiv.textContent = `Comando: "${command}". Clique em ▶️ para tocar.`;
             recognizedTextDiv.style.display = 'block';
             
-            // Apenas prepara o vídeo: torna visível e define como o atual.
+            // ALTERAÇÃO: Faz a mensagem de "Clique em Play" desaparecer após 5 segundos
+            setTimeout(() => {
+                recognizedTextDiv.style.display = 'none';
+            }, 5000); // 5000 milissegundos = 5 segundos
+
             targetEntity.setAttribute('visible', 'true');
             currentVideoElement = targetVideo;
-            
-            // NÃO dá play. Apenas garante que o botão Play esteja pronto.
             isPlaying = false;
             updatePlayPauseButton(); 
         } else {
-            // Se o comando não for reconhecido, volta ao estado inicial.
             statusDiv.textContent = 'Comando não reconhecido.';
             statusDiv.style.display = 'block';
             setTimeout(() => { statusDiv.style.display = 'none'; }, 3000);
@@ -254,10 +238,7 @@
     
     function submitTextInput() {
         const command = textInput.value.trim().toLowerCase();
-        if (command) {
-            handleSpeechCommand(command);
-            textInput.value = '';
-        }
+        if (command) { handleSpeechCommand(command); textInput.value = ''; }
     }
 
     sendTextButton.addEventListener('click', submitTextInput);
