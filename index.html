@@ -169,6 +169,52 @@
         updatePlayPauseButton();
     });
 
+    // ALTERAÇÃO: Lógica para o fim dos vídeos
+    allVideos.forEach(video => {
+        video.addEventListener('ended', () => {
+            // Casos especiais para vídeos que continuam em sequência
+            if (video.id === 'video_acucar') {
+                videoAcucarEntity.setAttribute('visible', 'false');
+                videoAcucar2Entity.setAttribute('visible', 'true');
+                currentVideoElement = videoAcucar2;
+                videoAcucar2.play();
+                return; // Mantém o botão como Pause
+            }
+            if (video.id === 'video_acucar2') {
+                videoAcucar2Entity.setAttribute('visible', 'false');
+                videoAcucar3Entity.setAttribute('visible', 'true');
+                currentVideoElement = videoAcucar3;
+                videoAcucar3.play();
+                return;
+            }
+            if (video.id === 'video_feijao') {
+                videoFeijaoEntity.setAttribute('visible', 'false');
+                videoFeijao2Entity.setAttribute('visible', 'true');
+                currentVideoElement = videoFeijao2;
+                videoFeijao2.play();
+                return; 
+            }
+            if (video.id === 'video_feijao2') {
+                videoFeijao2Entity.setAttribute('visible', 'false');
+                videoFeijao3Entity.setAttribute('visible', 'true');
+                currentVideoElement = videoFeijao3;
+                videoFeijao3.play();
+                return;
+            }
+            if (video.id === 'video_feijao3') {
+                videoFeijao3Entity.setAttribute('visible', 'false');
+                videoFeijao4Entity.setAttribute('visible', 'true');
+                currentVideoElement = videoFeijao4;
+                videoFeijao4.play();
+                return;
+            }
+            
+            // Caso padrão para todos os outros vídeos: reseta o botão
+            isPlaying = false;
+            updatePlayPauseButton();
+        });
+    });
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
@@ -203,6 +249,7 @@
 
         micButton.addEventListener('touchstart', (e) => { e.preventDefault(); if(recognizing) return; try { micWrapper.classList.add('recording'); recognition.start(); recognizing = true; } catch (err) { showStatus('Erro ao iniciar.', 3000); micWrapper.classList.remove('recording'); }});
         micButton.addEventListener('touchend', (e) => { e.preventDefault(); if(recognizing) { recognition.stop(); }});
+
     } else {
         showStatus('Comando de voz não suportado.', 5000);
         if (micWrapper) micWrapper.style.display = 'none';
