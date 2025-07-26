@@ -1,6 +1,6 @@
 {
     {
-        "name": "iatess-transcribe-app",
+        "name": "iatess-app-user",
         "version": "1.0.0",
         "private": true,
         "dependencies": {
