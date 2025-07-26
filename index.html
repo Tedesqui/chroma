@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
   
   <style>
-    /* ALTERAÇÃO 1: Estilos para estabilizar o layout em tela cheia */
+    /* Estilos para estabilizar o layout em tela cheia */
     html, body {
         height: 100%;
         width: 100%;
@@ -21,7 +21,6 @@
         height: 100%;
         width: 100%;
     }
-    /* Fim da Alteração 1 */
     
     /* Estilo para a mensagem inicial */
     #initial-message {
@@ -39,7 +38,9 @@
         max-width: 80%;
         font-family: sans-serif;
     }
-    #playPauseButton{
+    
+    /* Estilo do Botão Play/Pause */
+    #playPauseButton {
         position:fixed;
         top:20px;
         left:20px;
@@ -49,37 +50,34 @@
         border:none;
         border-radius:5px;
         cursor:pointer;
-        transition:.3s;
+        transition: transform 0.3s, background-color 0.3s;
         display: flex;
         align-items: center;
-    }
-    #playPauseButton:not(.is-paused) {
-        padding: 2.5 10px;
-        font-size: 16px;
-    }
-    #playPauseButton.is-paused {
         padding: 2.5px 10px;
         font-size: 16px;
     }
     #playPauseButton span { 
         color: #28a745; 
         line-height: 1;
+        font-size: 1.6em;
     }
     #playPauseButton:not(.is-paused) span {
         font-size: 3em;
     }
-    #playPauseButton.is-paused span {
-        font-size: 1.6em;
-    }
-    #playPauseButton.rotating{transform:rotate(360deg)}
-    #playPauseButton:hover{transform:scale(1.05)}
+    #playPauseButton.rotating { transform:rotate(360deg); }
+    #playPauseButton:hover { transform:scale(1.05); }
+
+    /* Estilo do Microfone e Status */
     .mic-wrapper{position:fixed;bottom:130px;left:50%;transform:translateX(-50%);z-index:999;display:inline-flex;align-items:center;justify-content:center}
-    #mic-button{background-color:#007bff;color:white;border:none;border-radius:9999px;padding:15px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:.2s}
+    #mic-button{background-color:#007bff;color:white;border:none;border-radius:9999px;padding:15px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition: transform 0.2s, background-color 0.2s}
     #mic-button:hover{background-color:#0056b3;transform:scale(1.1)}
     .mic-wrapper.recording #mic-button{transform:scale(1.7);background-color:#28a745!important}
     #mic-button svg{width:28px;height:28px;display:block}
-    #status{position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:10px 20px;background-color:rgba(0,0,0,0.7);color:white;border-radius:10px;z-index:998;font-size:16px;display:none}
-    #recognized-text{position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:8px 15px;background-color:rgba(0,0,0,0.75);color:white;border-radius:8px;z-index:998;font-size:16px;display:none;text-align:center;max-width:90%}
+    #status, #recognized-text {
+        position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:10px 20px;background-color:rgba(0,0,0,0.7);color:white;border-radius:10px;z-index:998;font-size:16px;display:none; text-align:center;max-width:90%
+    }
+    
+    /* Estilo do Input de Texto */
     #text-input-container {
         position: fixed;
         bottom: 80px;
@@ -88,7 +86,7 @@
         z-index: 998;
         display: flex;
         align-items: center;
-        transition: bottom 0.3s ease; /* Adiciona transição suave */
+        transition: bottom 0.3s ease;
     }
     #text-input {
         padding: 10px 15px;
@@ -112,28 +110,30 @@
     #send-text-button:hover {
         background-color: #0056b3;
     }
+
+    /* Estilo do Rodapé Social */
     #footerSocial{position:fixed;bottom:0;left:0;right:0;padding:20px 0;display:flex;justify-content:center;gap:40px;z-index:999;background-color:rgba(0,0,0,0.1);box-shadow:0 0 19.5px rgba(0,0,0,.47); transition: opacity 0.3s ease, visibility 0.3s ease;}
     #footerSocial a{display:flex;align-items:center;justify-content:center;width:34.56px;height:34.56px;text-decoration:none}
-    #footerSocial svg{width:34.56px;height:34.56px;transition:.3s}
+    #footerSocial svg{width:34.56px;height:34.56px;transition: transform 0.3s}
     #footerSocial a:hover svg{transform:scale(1.1)}
     #footerSocial .facebook svg{fill:#00008B}
     #footerSocial .instagram svg{fill:#833AB4}
     #footerSocial .whatsapp svg{fill:#25D366}
 
-    /* ALTERAÇÃO 2: Estilos para quando o teclado está ativo */
+    /* Estilos para quando o teclado está ativo */
     body.keyboard-active #footerSocial,
     body.keyboard-active .mic-wrapper {
-        visibility: hidden; /* Esconde os elementos */
+        visibility: hidden;
         opacity: 0;
     }
     body.keyboard-active #text-input-container {
         bottom: 10px; /* Sobe a caixa de texto para ficar acima do teclado */
     }
-    /* Fim da Alteração 2 */
   </style>
 </head>
 
-<body> <div id="initial-message">Aponte seu celular para frente para ver a IA, em seguida clique em Play.</div>
+<body> 
+  <div id="initial-message">Aponte seu celular para frente para ver a IA, em seguida clique em Play.</div>
 
   <button id="playPauseButton"><span>▶</span> Play</button>
 
@@ -156,43 +156,33 @@
     <a-entity id="video-inicial-entity" position="0 1 -8" visible="true" look-at="[camera]">
       <a-video src="#video_inicial" width="7" height="7"></a-video>
     </a-entity>
-
-    <a-entity id="video-chocolate-entity" position=0 1 -8" visible="false" look-at="[camera]">
+    <a-entity id="video-chocolate-entity" position="0 1 -8" visible="false" look-at="[camera]">
       <a-video src="#video_chocolate" width="7" height="7"></a-video>
     </a-entity>
-
     <a-entity id="video-acucar-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
       <a-video src="#video_acucar" width="20" height="5"></a-video>
     </a-entity>
-
     <a-entity id="video-acucar2-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
         <a-video src="#video_acucar2" width="20" height="5"></a-video>
     </a-entity>
-
     <a-entity id="video-acucar3-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
         <a-video src="#video_acucar3" width="20" height="5"></a-video>
     </a-entity>
-
     <a-entity id="video-feijao-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
       <a-video src="#video_feijao" width="20" height="5"></a-video>
     </a-entity>
-
     <a-entity id="video-feijao2-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
       <a-video src="#video_feijao2" width="20" height="5"></a-video>
     </a-entity>
-    
     <a-entity id="video-feijao3-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
       <a-video src="#video_feijao3" width="20" height="5"></a-video>
     </a-entity>
-
     <a-entity id="video-feijao4-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
       <a-video src="#video_feijao4" width="20" height="5"></a-video>
     </a-entity>
-
     <a-entity id="video-ofertas-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
       <a-video src="#video_ofertas" width="20" height="5"></a-video>
     </a-entity>
-
   </a-scene>
 
   <div id="status">Ouvindo...</div>
@@ -270,7 +260,7 @@
     let currentVideoElement = initialVideo; // Inicia com o vídeo principal
 
     function getCurrentVideo() {
-        return currentVideoElement; // Retorna o vídeo atualmente ativo
+        return currentVideoElement;
     }
 
     function updatePlayPauseButton() {
@@ -307,11 +297,9 @@
         updatePlayPauseButton();
     });
 
-    // Bloco de código modificado para a repetição e transição de vídeos
     allVideos.forEach(video => {
         videoPlayCounts.set(video.id, 0);
         video.addEventListener('ended', () => {
-            // Caso especial: ao terminar video_acucar, toca video_acucar2
             if (video.id === 'video_acucar') {
                 videoAcucarEntity.setAttribute('visible', 'false');
                 videoAcucar2Entity.setAttribute('visible', 'true');
@@ -319,8 +307,6 @@
                 videoAcucar2.play();
                 return;
             }
-
-            // Caso especial: ao terminar video_acucar2, toca video_acucar3
             if (video.id === 'video_acucar2') {
                 videoAcucar2Entity.setAttribute('visible', 'false');
                 videoAcucar3Entity.setAttribute('visible', 'true');
@@ -328,8 +314,6 @@
                 videoAcucar3.play();
                 return;
             }
-            
-            // Caso especial: ao terminar video_feijao, toca video_feijao2
             if (video.id === 'video_feijao') {
                 videoFeijaoEntity.setAttribute('visible', 'false');
                 videoFeijao2Entity.setAttribute('visible', 'true');
@@ -337,8 +321,6 @@
                 videoFeijao2.play();
                 return; 
             }
-            
-            // Caso especial: ao terminar video_feijao2, toca video_feijao3
             if (video.id === 'video_feijao2') {
                 videoFeijao2Entity.setAttribute('visible', 'false');
                 videoFeijao3Entity.setAttribute('visible', 'true');
@@ -346,8 +328,6 @@
                 videoFeijao3.play();
                 return;
             }
-            
-            // Caso especial: ao terminar video_feijao3, toca video_feijao4
             if (video.id === 'video_feijao3') {
                 videoFeijao3Entity.setAttribute('visible', 'false');
                 videoFeijao4Entity.setAttribute('visible', 'true');
@@ -355,15 +335,12 @@
                 videoFeijao4.play();
                 return;
             }
-            
-            // Caso especial: vídeo inicial não repete
             if (video.id === 'video_inicial') {
                 isPlaying = false;
                 updatePlayPauseButton();
                 return;
             }
 
-            // Lógica de repetição padrão para os outros vídeos
             let count = videoPlayCounts.get(video.id) || 0;
             if (count < 2) {
                 count++;
@@ -423,7 +400,6 @@
         let videoTriggered = false;
         stopAllVideos();
         
-        // Oculta todas as entidades de vídeo
         allVideoEntities.forEach(entity => entity.setAttribute('visible', 'false'));
 
         const playVideo = (videoElement) => {
@@ -434,7 +410,7 @@
             updatePlayPauseButton();
         };
 
-        if (command.includes('Top') || command.includes('34')) {
+        if (command.includes('top') || command.includes('34')) {
             videoFeijaoEntity.setAttribute('visible', 'true');
             currentVideoElement = videoFeijao;
             playVideo(videoFeijao);
@@ -518,7 +494,7 @@
         if (command) {
             handleSpeechCommand(command);
             textInput.value = '';
-            textInput.blur(); // ALTERAÇÃO 4: Opcional, mas recomendado
+            textInput.blur(); 
         }
     }
 
@@ -530,7 +506,7 @@
         }
     });
 
-    /* ALTERAÇÃO 3: Lógica para gerenciar o foco no input e o teclado */
+    /* Lógica para gerenciar o foco no input e o teclado */
     const bodyEl = document.body;
     textInput.addEventListener('focus', () => {
         bodyEl.classList.add('keyboard-active');
@@ -539,8 +515,36 @@
     textInput.addEventListener('blur', () => {
         bodyEl.classList.remove('keyboard-active');
     });
-    /* Fim da Alteração 3 */
-
   </script>
-</body>
+
+  <script>
+    // Função para corrigir o posicionamento do vídeo da câmera no iOS
+    function fixIosCamera() {
+      // AR.js cria um elemento de vídeo com a classe 'arjs-video'
+      const arVideo = document.querySelector('.arjs-video');
+  
+      if (arVideo) {
+        // Se o vídeo foi encontrado, aplicamos o estilo para fixá-lo
+        console.log('Elemento de vídeo da AR encontrado. Aplicando correção para iOS.');
+        arVideo.style.position = 'fixed';
+        arVideo.style.top = '0';
+        arVideo.style.left = '0';
+        arVideo.style.width = '100%';
+        arVideo.style.height = '100%';
+        arVideo.style.objectFit = 'cover';
+        arVideo.style.zIndex = '-1'; // Garante que ele fique atrás de todo o conteúdo
+      } else {
+        // Se o AR.js ainda não criou o vídeo, esperamos 100ms e tentamos novamente
+        setTimeout(fixIosCamera, 100);
+      }
+    }
+  
+    // Verificamos se o dispositivo é um iPhone, iPad ou iPod
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      // Executamos a correção apenas em dispositivos iOS após a página carregar
+      window.addEventListener('load', fixIosCamera);
+    }
+  </script>
+  </body>
 </html>
