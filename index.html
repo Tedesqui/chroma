@@ -10,35 +10,34 @@
   <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
   
   <style>
-    body{margin:0}
-    #initial-message {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; background-color: rgba(0, 0, 0, 0.8); color: white; padding: 20px; border-radius: 10px; text-align: center; font-size: 18px; max-width: 80%; font-family: sans-serif;}
-    #playPauseButton{position:fixed; top:20px; left:20px; z-index:1000; background-color:rgba(0,0,0,0.55); color:white; border:none; border-radius:5px; cursor:pointer; transition:.3s; display: flex; align-items: center;}
-    #playPauseButton:not(.is-paused) {padding: 2.5 10px; font-size: 16px;}
-    #playPauseButton.is-paused {padding: 2.5px 10px; font-size: 16px;}
-    #playPauseButton span {color: #28a745; line-height: 1;}
-    #playPauseButton:not(.is-paused) span {font-size: 3em;}
-    #playPauseButton.is-paused span {font-size: 1.6em;}
-    #playPauseButton.rotating{transform:rotate(360deg)}
-    #playPauseButton:hover{transform:scale(1.05)}
-    .mic-wrapper{position:fixed;bottom:130px;left:50%;transform:translateX(-50%);z-index:999;display:inline-flex;align-items:center;justify-content:center}
-    #mic-button{background-color:#007bff;color:white;border:none;border-radius:9999px;padding:15px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:.2s}
-    #mic-button:hover{background-color:#0056b3;transform:scale(1.1)}
-    #mic-button:disabled {background-color: #6c757d; cursor: not-allowed;}
-    .mic-wrapper.recording #mic-button{transform:scale(1.7);background-color:#28a745!important}
-    #mic-button svg{width:28px;height:28px;display:block}
-    #status{position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:10px 20px;background-color:rgba(0,0,0,0.7);color:white;border-radius:10px;z-index:998;font-size:16px;display:none}
-    #recognized-text{position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:8px 15px;background-color:rgba(0,0,0,0.75);color:white;border-radius:8px;z-index:998;font-size:16px;display:none;text-align:center;max-width:90%}
-    #text-input-container {position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 998; display: flex; align-items: center;}
-    #text-input {padding: 10px 15px; border-radius: 20px 0 0 20px; border: 1px solid #aaa; border-right: none; width: 200px; font-size: 16px; background-color: rgba(255, 255, 255, 0.9);}
-    #send-text-button {padding: 10px 15px; border-radius: 0 20px 20px 0; border: 1px solid #aaa; background-color: #007bff; color: white; cursor: pointer; font-size: 16px; transition: background-color 0.2s;}
-    #send-text-button:hover {background-color: #0056b3;}
-    #footerSocial{position:fixed;bottom:0;left:0;right:0;padding:20px 0;display:flex;justify-content:center;gap:40px;z-index:999;background-color:rgba(0,0,0,0.1);box-shadow:0 0 19.5px rgba(0,0,0,.47)}
-    #footerSocial a{display:flex;align-items:center;justify-content:center;width:34.56px;height:34.56px;text-decoration:none}
-    #footerSocial svg{width:34.56px;height:34.56px;transition:.3s}
-    #footerSocial a:hover svg{transform:scale(1.1)}
-    #footerSocial .facebook svg{fill:#00008B}
-    #footerSocial .instagram svg{fill:#833AB4}
-    #footerSocial .whatsapp svg{fill:#25D366}
+    body { margin: 0; overflow: hidden; }
+    #initial-message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; background-color: rgba(0, 0, 0, 0.8); color: white; padding: 20px; border-radius: 10px; text-align: center; font-size: 18px; max-width: 80%; font-family: sans-serif; }
+    #playPauseButton { position: fixed; top: 20px; left: 20px; z-index: 1000; background-color: rgba(0,0,0,0.55); color: white; border: none; border-radius: 5px; cursor: pointer; transition: .3s; display: flex; align-items: center; }
+    #playPauseButton:not(.is-paused) { padding: 2.5px 10px; font-size: 16px; }
+    #playPauseButton.is-paused { padding: 2.5px 10px; font-size: 16px; }
+    #playPauseButton span { color: #28a745; line-height: 1; }
+    #playPauseButton:not(.is-paused) span { font-size: 3em; }
+    #playPauseButton.is-paused span { font-size: 1.6em; }
+    #playPauseButton.rotating { transform: rotate(360deg); }
+    #playPauseButton:hover { transform: scale(1.05); }
+    .mic-wrapper { position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%); z-index: 999; display: inline-flex; align-items: center; justify-content: center; }
+    #mic-button { background-color: #007bff; color: white; border: none; border-radius: 9999px; padding: 15px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.3); transition: .2s; }
+    #mic-button:hover { background-color: #0056b3; transform: scale(1.1); }
+    #mic-button:disabled { background-color: #6c757d; cursor: not-allowed; }
+    .mic-wrapper.recording #mic-button { transform: scale(1.7); background-color: #28a745 !important; }
+    #mic-button svg { width: 28px; height: 28px; display: block; }
+    #status, #recognized-text { position: fixed; bottom: 210px; left: 50%; transform: translateX(-50%); padding: 10px 20px; background-color: rgba(0,0,0,0.75); color: white; border-radius: 10px; z-index: 998; font-size: 16px; display: none; text-align: center; max-width: 90%; }
+    #text-input-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 998; display: flex; align-items: center; }
+    #text-input { padding: 10px 15px; border-radius: 20px 0 0 20px; border: 1px solid #aaa; border-right: none; width: 200px; font-size: 16px; background-color: rgba(255, 255, 255, 0.9); }
+    #send-text-button { padding: 10px 15px; border-radius: 0 20px 20px 0; border: 1px solid #aaa; background-color: #007bff; color: white; cursor: pointer; font-size: 16px; transition: background-color 0.2s; }
+    #send-text-button:hover { background-color: #0056b3; }
+    #footerSocial { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px 0; display: flex; justify-content: center; gap: 40px; z-index: 999; background-color: rgba(0,0,0,0.1); box-shadow: 0 0 19.5px rgba(0,0,0,.47); }
+    #footerSocial a { display: flex; align-items: center; justify-content: center; width: 34.56px; height: 34.56px; text-decoration: none; }
+    #footerSocial svg { width: 34.56px; height: 34.56px; transition: .3s; }
+    #footerSocial a:hover svg { transform: scale(1.1); }
+    #footerSocial .facebook svg { fill: #00008B; }
+    #footerSocial .instagram svg { fill: #833AB4; }
+    #footerSocial .whatsapp svg { fill: #25D366; }
   </style>
 </head>
 
@@ -96,8 +95,7 @@
 
   <div id="status">Ouvindo...</div>
   <div class="mic-wrapper" id="mic-wrapper">
-      <button id="mic-button">
-          <svg xmlns="http://www.w3.org/2000/svg" id="mic-icon" viewBox="0 0 20 20" fill="currentColor">
+      <button id="mic-button" disabled> <svg xmlns="http://www.w3.org/2000/svg" id="mic-icon" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" />
           </svg>
       </button>
@@ -114,190 +112,204 @@
   </div>
 
   <script>
-    // Lógica para esconder a mensagem inicial após 5 segundos
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- REFERÊNCIAS A TODOS OS ELEMENTOS DA PÁGINA ---
+        const micWrapper = document.getElementById('mic-wrapper');
+        const micButton = document.getElementById('mic-button');
+        const statusDiv = document.getElementById('status');
+        const playPauseButton = document.getElementById('playPauseButton');
+        const recognizedTextDiv = document.getElementById('recognized-text');
+        const textInput = document.getElementById('text-input');
+        const sendTextButton = document.getElementById('send-text-button');
+        const allVideos = Array.from(document.querySelectorAll('a-scene video'));
+        const allVideoEntities = Array.from(document.querySelectorAll('a-scene a-entity[id^="video-"]'));
+        let currentVideoElement = document.querySelector('#video_inicial');
+        let isPlaying = false;
+        
+        const videoPlayCounts = new Map();
+        allVideos.forEach(v => videoPlayCounts.set(v.id, 0));
+
+        // --- LÓGICA DE CONTROLE DE VÍDEOS ---
+        function getCurrentVideo() { return currentVideoElement; }
+        function updatePlayPauseButton() {
+            if (isPlaying) {
+                playPauseButton.innerHTML = '<span>⏸</span> Pause';
+                playPauseButton.classList.add('is-paused');
+            } else {
+                playPauseButton.innerHTML = '<span>▶</span> Play';
+                playPauseButton.classList.remove('is-paused');
+            }
+        }
+        function stopAllVideos() {
+            allVideos.forEach(video => {
+                video.pause();
+                video.currentTime = 0;
+            });
+        }
+        function handleSpeechCommand(command) {
+            console.log("Comando recebido para execução:", command);
+            stopAllVideos();
+            allVideoEntities.forEach(entity => entity.setAttribute('visible', 'false'));
+            
+            const playVideo = (videoElement) => {
+                videoElement.play().catch(e => console.error("Erro ao tocar vídeo:", e));
+                isPlaying = true;
+                updatePlayPauseButton();
+            };
+
+            const entityMap = {
+                'top': { entityId: '#video-feijao-entity', videoId: '#video_feijao' },
+                '34': { entityId: '#video-feijao-entity', videoId: '#video_feijao' },
+                '38': { entityId: '#video-acucar-entity', videoId: '#video_acucar' },
+                'ht': { entityId: '#video-acucar-entity', videoId: '#video_acucar' },
+                'chocolate': { entityId: '#video-chocolate-entity', videoId: '#video_chocolate' },
+                'quero': { entityId: '#video-ofertas-entity', videoId: '#video_ofertas' },
+                'sim': { entityId: '#video-ofertas-entity', videoId: '#video_ofertas' },
+                'início': { entityId: '#video-inicial-entity', videoId: '#video_inicial' },
+                'inicio': { entityId: '#video-inicial-entity', videoId: '#video_inicial' }
+            };
+
+            let commandFound = false;
+            for (const key in entityMap) {
+                if (command.includes(key)) {
+                    const { entityId, videoId } = entityMap[key];
+                    document.querySelector(entityId).setAttribute('visible', 'true');
+                    currentVideoElement = document.querySelector(videoId);
+                    playVideo(currentVideoElement);
+                    commandFound = true;
+                    break;
+                }
+            }
+             if (!commandFound) {
+                const initialEntity = document.querySelector('#video-inicial-entity');
+                initialEntity.setAttribute('visible', 'true');
+                currentVideoElement = document.querySelector('#video_inicial');
+             }
+        }
+
+        // --- LÓGICA DE GRAVAÇÃO E ENVIO DE ÁUDIO ---
+        let mediaRecorder;
+        let audioChunks = [];
+
+        const sendAudioToBackend = async (audioBlob) => {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'recording.ogg');
+            statusDiv.textContent = 'Processando...';
+            statusDiv.style.display = 'block';
+            recognizedTextDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/transcribe', { method: 'POST', body: formData });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `Erro do servidor: ${response.statusText}`);
+                }
+                const data = await response.json();
+                recognizedTextDiv.textContent = `"${data.transcript}"`;
+                recognizedTextDiv.style.display = 'block';
+                handleSpeechCommand(data.transcript.toLowerCase());
+            } catch (error) {
+                console.error('Erro ao enviar áudio:', error);
+                recognizedTextDiv.textContent = 'Erro ao transcrever. Tente novamente.';
+                recognizedTextDiv.style.display = 'block';
+            } finally {
+                statusDiv.style.display = 'none';
+            }
+        };
+
+        const setupMediaRecorder = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/ogg; codecs=opus' });
+                mediaRecorder.addEventListener('dataavailable', event => audioChunks.push(event.data));
+                mediaRecorder.addEventListener('stop', () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
+                    sendAudioToBackend(audioBlob);
+                    audioChunks = [];
+                });
+                micButton.disabled = false;
+            } catch (error) {
+                console.error('Erro ao acessar o microfone:', error);
+                alert('Não foi possível acessar o microfone. Verifique as permissões e recarregue a página.');
+                micButton.disabled = true;
+            }
+        };
+
+        // --- EVENT LISTENERS ---
+        micButton.addEventListener('touchstart', async (e) => {
+            e.preventDefault();
+            if (!mediaRecorder) {
+                await setupMediaRecorder();
+            }
+            if (mediaRecorder && mediaRecorder.state === 'inactive') {
+                mediaRecorder.start();
+                micWrapper.classList.add('recording');
+                statusDiv.textContent = 'Ouvindo...';
+                statusDiv.style.display = 'block';
+                if (navigator.vibrate) navigator.vibrate(100);
+            }
+        });
+
+        micButton.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                micWrapper.classList.remove('recording');
+            }
+        });
+        
+        playPauseButton.addEventListener('click', () => {
+             const currentVideo = getCurrentVideo();
+             if (!currentVideo) return;
+             if (isPlaying) { currentVideo.pause(); } else { currentVideo.play().catch(e => console.error("Play failed", e)); }
+             isPlaying = !isPlaying;
+             updatePlayPauseButton();
+        });
+
+        const submitTextInput = () => {
+            const command = textInput.value.trim().toLowerCase();
+            if (command) {
+                handleSpeechCommand(command);
+                textInput.value = '';
+            }
+        }
+        sendTextButton.addEventListener('click', submitTextInput);
+        textInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitTextInput(); });
+
+        allVideos.forEach(video => {
+            video.addEventListener('ended', () => {
+                const videoSequence = {
+                    'video_acucar': { nextEntity: '#video-acucar2-entity', nextVideo: '#video_acucar2' },
+                    'video_acucar2': { nextEntity: '#video-acucar3-entity', nextVideo: '#video_acucar3' },
+                    'video_feijao': { nextEntity: '#video-feijao2-entity', nextVideo: '#video_feijao2' },
+                    'video_feijao2': { nextEntity: '#video-feijao3-entity', nextVideo: '#video_feijao3' },
+                    'video_feijao3': { nextEntity: '#video-feijao4-entity', nextVideo: '#video_feijao4' },
+                };
+                
+                const currentId = video.id;
+                const next = videoSequence[currentId];
+
+                if (next) {
+                    allVideoEntities.forEach(e => e.setAttribute('visible', 'false'));
+                    document.querySelector(next.nextEntity).setAttribute('visible', 'true');
+                    currentVideoElement = document.querySelector(next.nextVideo);
+                    currentVideoElement.play();
+                } else {
+                     isPlaying = false;
+                     updatePlayPauseButton();
+                }
+            });
+        });
+
+        // Inicia a configuração do microfone
+        setupMediaRecorder();
+        
+        // Esconde a mensagem inicial
         const initialMessage = document.getElementById('initial-message');
         if (initialMessage) {
-            setTimeout(() => {
-                initialMessage.style.display = 'none';
-            }, 5000);
+            setTimeout(() => { initialMessage.style.display = 'none'; }, 5000);
         }
     });
-
-    // --- REFERÊNCIAS A TODOS OS ELEMENTOS DA PÁGINA ---
-    const micWrapper = document.getElementById('mic-wrapper');
-    const micButton = document.getElementById('mic-button');
-    const statusDiv = document.getElementById('status');
-    const playPauseButton = document.getElementById('playPauseButton');
-    const recognizedTextDiv = document.getElementById('recognized-text');
-    const textInput = document.getElementById('text-input');
-    const sendTextButton = document.getElementById('send-text-button');
-    const initialVideo = document.querySelector('#video_inicial');
-    const videoFeijao = document.querySelector('#video_feijao');
-    const videoFeijao2 = document.querySelector('#video_feijao2');
-    const videoFeijao3 = document.querySelector('#video_feijao3');
-    const videoFeijao4 = document.querySelector('#video_feijao4');
-    const videoAcucar = document.querySelector('#video_acucar');
-    const videoAcucar2 = document.querySelector('#video_acucar2');
-    const videoAcucar3 = document.querySelector('#video_acucar3');
-    const videoChocolate = document.querySelector('#video_chocolate');
-    const videoOfertas = document.querySelector('#video_ofertas');
-    const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoFeijao3, videoFeijao4, videoAcucar, videoAcucar2, videoAcucar3, videoChocolate, videoOfertas];
-    const videoInicialEntity = document.querySelector('#video-inicial-entity');
-    const videoFeijaoEntity = document.querySelector('#video-feijao-entity');
-    const videoFeijao2Entity = document.querySelector('#video-feijao2-entity');
-    const videoFeijao3Entity = document.querySelector('#video-feijao3-entity');
-    const videoFeijao4Entity = document.querySelector('#video-feijao4-entity');
-    const videoAcucarEntity = document.querySelector('#video-acucar-entity');
-    const videoAcucar2Entity = document.querySelector('#video-acucar2-entity');
-    const videoAcucar3Entity = document.querySelector('#video-acucar3-entity');
-    const videoChocolateEntity = document.querySelector('#video-chocolate-entity');
-    const videoOfertasEntity = document.querySelector('#video-ofertas-entity');
-    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoFeijao2Entity, videoFeijao3Entity, videoFeijao4Entity, videoAcucarEntity, videoAcucar2Entity, videoAcucar3Entity, videoChocolateEntity, videoOfertasEntity];
-    let isPlaying = false;
-    let currentVideoElement = initialVideo;
-
-    // --- LÓGICA DE CONTROLE DE VÍDEOS (EXISTENTE) ---
-    // (Esta parte do seu código permanece a mesma)
-    function getCurrentVideo() { return currentVideoElement; }
-    function updatePlayPauseButton() { if (isPlaying) { playPauseButton.innerHTML = '<span>⏸</span> Pause'; playPauseButton.classList.add('is-paused'); } else { playPauseButton.innerHTML = '<span>▶</span> Play'; playPauseButton.classList.remove('is-paused'); } }
-    function stopAllVideos() { allVideos.forEach(video => { video.pause(); video.currentTime = 0; }); }
-    function handleSpeechCommand(command) {
-        console.log("Comando recebido para execução:", command);
-        let videoTriggered = false;
-        stopAllVideos();
-        allVideoEntities.forEach(entity => entity.setAttribute('visible', 'false'));
-        const playVideo = (videoElement) => {
-            videoElement.play();
-            videoTriggered = true;
-            isPlaying = true;
-            updatePlayPauseButton();
-        };
-        if (command.includes('top') || command.includes('34')) { videoFeijaoEntity.setAttribute('visible', 'true'); currentVideoElement = videoFeijao; playVideo(videoFeijao); }
-        else if (command.includes('38') || command.includes('ht')) { videoAcucarEntity.setAttribute('visible', 'true'); currentVideoElement = videoAcucar; playVideo(videoAcucar); }
-        else if (command.includes('chocolate')) { videoChocolateEntity.setAttribute('visible', 'true'); currentVideoElement = videoChocolate; playVideo(videoChocolate); }
-        else if (command.includes('quero') || command.includes('sim')) { videoOfertasEntity.setAttribute('visible', 'true'); currentVideoElement = videoOfertas; playVideo(videoOfertas); }
-        else if (command.includes('início') || command.includes('inicio')) { videoInicialEntity.setAttribute('visible', 'true'); currentVideoElement = initialVideo; playVideo(initialVideo); }
-    }
-    // ... (O resto da sua lógica de vídeo e eventos de 'ended' continua aqui) ...
-
-    // --- NOVA LÓGICA DE GRAVAÇÃO E ENVIO DE ÁUDIO ---
-    
-    let mediaRecorder;
-    let audioChunks = [];
-
-    const sendAudioToBackend = async (audioBlob) => {
-        const formData = new FormData();
-        formData.append('audio', audioBlob, 'recording.ogg');
-
-        statusDiv.textContent = 'Processando...';
-        statusDiv.style.display = 'block';
-        recognizedTextDiv.style.display = 'none';
-
-        try {
-            // A URL relativa aponta para a nossa Serverless Function na Vercel
-            const response = await fetch('/api/transcribe', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `Erro do servidor: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            
-            // Exibe o texto e chama a função de controle de vídeo
-            recognizedTextDiv.textContent = `"${data.transcript}"`;
-            recognizedTextDiv.style.display = 'block';
-            handleSpeechCommand(data.transcript.toLowerCase());
-
-        } catch (error) {
-            console.error('Erro ao enviar áudio:', error);
-            recognizedTextDiv.textContent = 'Erro ao transcrever. Tente novamente.';
-            recognizedTextDiv.style.display = 'block';
-        } finally {
-            statusDiv.style.display = 'none';
-        }
-    };
-
-    // Prepara o gravador de áudio quando a página carrega
-    async function setupMediaRecorder() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/ogg; codecs=opus' });
-
-            mediaRecorder.addEventListener('dataavailable', event => {
-                audioChunks.push(event.data);
-            });
-
-            mediaRecorder.addEventListener('stop', () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
-                sendAudioToBackend(audioBlob);
-                audioChunks = []; // Limpa para a próxima gravação
-            });
-            micButton.disabled = false; // Habilita o botão do microfone
-        } catch(error) {
-            console.error('Erro ao acessar o microfone:', error);
-            alert('Não foi possível acessar o microfone. Por favor, conceda a permissão e recarregue a página.');
-            micButton.disabled = true; // Mantém o botão desabilitado
-        }
-    }
-
-    // --- EVENT LISTENERS (OUVINTES DE EVENTOS) ---
-
-    // Botão de Play/Pause
-    playPauseButton.addEventListener('click', () => {
-        const currentVideo = getCurrentVideo();
-        if (!currentVideo) return;
-        if (isPlaying) { currentVideo.pause(); } else { currentVideo.play().catch(e => console.error("Play failed", e)); }
-        isPlaying = !isPlaying;
-        updatePlayPauseButton();
-    });
-
-    // Inicia a gravação com toque no microfone
-    micButton.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (mediaRecorder && mediaRecorder.state === 'inactive') {
-            mediaRecorder.start();
-            micWrapper.classList.add('recording');
-            statusDiv.textContent = 'Ouvindo...';
-            statusDiv.style.display = 'block';
-            if (navigator.vibrate) navigator.vibrate(100);
-        }
-    });
-
-    // Para a gravação ao soltar o botão do microfone
-    micButton.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-            mediaRecorder.stop();
-            micWrapper.classList.remove('recording');
-        }
-    });
-
-    // Campo de texto
-    function submitTextInput() {
-        const command = textInput.value.trim().toLowerCase();
-        if (command) {
-            handleSpeechCommand(command);
-            textInput.value = '';
-        }
-    }
-    sendTextButton.addEventListener('click', submitTextInput);
-    textInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { submitTextInput(); }});
-
-    // Lógica de repetição e transição dos vídeos
-    allVideos.forEach(video => {
-        video.addEventListener('ended', () => {
-            // Seu código de transição de vídeos (feijao -> feijao2, etc.) vai aqui...
-        });
-    });
-
-    // Inicia tudo
-    setupMediaRecorder();
-
   </script>
 </body>
 </html>
