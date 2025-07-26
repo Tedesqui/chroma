@@ -11,7 +11,7 @@
   
   <style>
     body{margin:0; font-family: sans-serif;}
-    #initial-message, #recognized-text, #status {
+    #status {
         opacity: 1;
         visibility: visible;
         transition: opacity 0.5s ease-out, visibility 0s linear 0.5s;
@@ -21,7 +21,6 @@
         visibility: hidden;
         transition: opacity 0.5s ease-out, visibility 0s linear 0.5s;
     }
-    #initial-message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; background-color: rgba(0, 0, 0, 0.8); color: white; padding: 20px; border-radius: 10px; text-align: center; font-size: 18px; max-width: 80%; }
     #playPauseButton{ position:fixed; top:20px; left:20px; z-index:1000; background-color:rgba(0,0,0,0.55); color:white; border:none; border-radius:5px; cursor:pointer; transition:.3s; display: flex; align-items: center; }
     #playPauseButton:not(.is-paused) { padding: 2.5px 10px; font-size: 16px; }
     #playPauseButton.is-paused { padding: 2.5px 10px; font-size: 16px; }
@@ -35,7 +34,6 @@
     .mic-wrapper.recording #mic-button{transform:scale(1.7);background-color:#28a745!important}
     #mic-button svg{width:28px;height:28px;display:block}
     #status{position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:10px 20px;background-color:rgba(0,0,0,0.7);color:white;border-radius:10px;z-index:998;font-size:16px;}
-    #recognized-text{ position:fixed;bottom:210px;left:50%;transform:translateX(-50%); padding:8px 15px;background-color:rgba(0,0,0,0.75);color:white; border-radius:8px;z-index:998;font-size:16px; text-align:center;max-width:90%; }
     #text-input-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 998; display: flex; align-items: center; }
     #text-input { padding: 10px 15px; border-radius: 20px 0 0 20px; border: 1px solid #aaa; border-right: none; width: 200px; font-size: 16px; background-color: rgba(255, 255, 255, 0.9); }
     #send-text-button { padding: 10px 15px; border-radius: 0 20px 20px 0; border: 1px solid #aaa; background-color: #007bff; color: white; cursor: pointer; font-size: 16px; transition: background-color 0.2s; }
@@ -50,7 +48,6 @@
   </style>
 </head>
 <body style="margin: 0; overflow: hidden;">
-  <div id="initial-message">Aponte seu celular para frente para ver a IA, em seguida clique em Play.</div>
   <button id="playPauseButton" class="is-paused"><span>▶️</span> Play</button>
 
   <a-scene vr-mode-ui="enabled: false;">
@@ -81,7 +78,6 @@
 
   <div id="status" class="is-hidden"></div>
   <div class="mic-wrapper" id="mic-wrapper"><button id="mic-button"><svg xmlns="http://www.w3.org/2000/svg" id="mic-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" /></svg></button></div>
-  <div id="recognized-text" class="is-hidden"></div>
   <div id="text-input-container"><input type="text" id="text-input" placeholder="Digite seu comando..." autocomplete="off"><button id="send-text-button">➤</button></div>
   <div id="footerSocial">
     <a href="https://www.facebook.com/tritonyachts/" target="_blank" class="facebook" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.87v-6.98h-3v-2.89h3v-2.2c0-3 1.79-4.66 4.53-4.66 1.31 0 2.68.24 2.68.24v3h-1.54c-1.52 0-1.99.95-1.99 1.92v2.7h3.4l-.54 2.89h-2.86v6.98A10 10 0 0 0 22 12"/></svg></a>
@@ -90,12 +86,10 @@
   </div>
 
 <script>
-    const initialMessage = document.getElementById('initial-message');
     const micWrapper = document.getElementById('mic-wrapper');
     const micButton = document.getElementById('mic-button');
     const statusDiv = document.getElementById('status');
     const playPauseButton = document.getElementById('playPauseButton');
-    const recognizedTextDiv = document.getElementById('recognized-text');
     const textInput = document.getElementById('text-input');
     const sendTextButton = document.getElementById('send-text-button');
     const allVideos = Array.from(document.querySelectorAll('a-assets video'));
@@ -123,12 +117,8 @@
         requestAnimationFrame(checkTime);
     }
 
-    // ALTERAÇÃO 1: Remover o timer da mensagem inicial.
-    // Ela agora ficará visível até o primeiro clique no botão Play.
-    window.addEventListener('load', () => {
-        // Nenhuma ação aqui. A mensagem simplesmente aparece.
-    });
-
+    // A lógica da mensagem inicial foi completamente removida.
+    
     function updatePlayPauseButton() {
         if (isPlaying) {
             playPauseButton.innerHTML = '<span>⏸️</span> Pause';
@@ -139,12 +129,7 @@
         }
     }
 
-    // ALTERAÇÃO 2: O botão de Play agora também esconde as mensagens.
     playPauseButton.addEventListener('click', () => {
-        // Esconde as mensagens que podem estar visíveis.
-        initialMessage.classList.add('is-hidden');
-        recognizedTextDiv.classList.add('is-hidden');
-
         const videoToPlay = currentVideoElement;
         if (!videoToPlay) return;
 
@@ -160,7 +145,6 @@
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
-        // ...configuração do recognition... (sem alterações)
         recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.lang = 'pt-BR';
@@ -176,13 +160,15 @@
             handleSpeechCommand(speechResult.toLowerCase());
         };
 
-        recognition.onerror = (event) => { /* ... */ };
-        recognition.onend = () => { /* ... */ };
+        recognition.onerror = (event) => { showAndHide(statusDiv, 4000, `Erro: ${event.error}.`); recognizing = false; micWrapper.classList.remove('recording');};
+        recognition.onend = () => { if (recognizing) { recognizing = false; micWrapper.classList.remove('recording'); statusDiv.classList.add('is-hidden'); } };
 
-        micButton.addEventListener('touchstart', (e) => { /* ... */ });
-        micButton.addEventListener('touchend', (e) => { /* ... */ });
+        micButton.addEventListener('touchstart', (e) => { e.preventDefault(); if(recognizing) return; try { micWrapper.classList.add('recording'); recognition.start(); recognizing = true; } catch (err) { showAndHide(statusDiv, 4000, 'Erro ao iniciar.'); micWrapper.classList.remove('recording'); }});
+        micButton.addEventListener('touchend', (e) => { e.preventDefault(); if(recognizing) { recognition.stop(); }});
+
     } else {
-        // ... (lógica para navegador sem suporte)
+        showAndHide(statusDiv, 5000, 'Comando de voz não suportado.');
+        if (micWrapper) micWrapper.style.display = 'none';
     }
 
     function stopAllVideos() {
@@ -203,29 +189,33 @@
         let targetVideo = null;
         let targetEntity = null;
         
-        // ... (lógica para encontrar vídeo e entidade)
-        const videoMap = { /* ... */ };
+        const videoMap = { /* ... */ }; // (O mapeamento de vídeos permanece)
         if (command.includes('top') || command.includes('34')) { [targetEntity, targetVideo] = videoMap.feijao; }
-        // ... (outros `else if`)
+        // ... (outros `else if` para seus vídeos)
 
         if (targetEntity && targetVideo) {
-            const message = `Comando: "${command}". Clique em ▶️ para tocar.`;
-            
-            // ALTERAÇÃO 3: Apenas mostra a mensagem, sem agendar para esconder.
-            recognizedTextDiv.textContent = message;
-            recognizedTextDiv.classList.remove('is-hidden');
-
+            // A mensagem que sinalizava para clicar em Play foi removida.
+            // Apenas preparamos o vídeo.
             targetEntity.setAttribute('visible', 'true');
             currentVideoElement = targetVideo;
             isPlaying = false;
             updatePlayPauseButton(); 
         } else {
-            // ... (lógica para comando não reconhecido)
+            showAndHide(statusDiv, 3000, 'Comando não reconhecido.');
+            document.querySelector('#video-inicial-entity').setAttribute('visible', 'true');
+            currentVideoElement = initialVideo;
+            isPlaying = false;
+            updatePlayPauseButton();
         }
     }
     
-    // ... (restante do seu script, sem alterações)
-    
+    function submitTextInput() {
+        const command = textInput.value.trim().toLowerCase();
+        if (command) { handleSpeechCommand(command); textInput.value = ''; }
+    }
+
+    sendTextButton.addEventListener('click', submitTextInput);
+    textInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { submitTextInput(); } });
 </script>
 </body>
 </html>
