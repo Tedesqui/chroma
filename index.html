@@ -34,13 +34,46 @@
         visibility: visible;
     }
     
-    #playPauseButton{ position:fixed; top:20px; left:20px; z-index:1000; background-color:rgba(0,0,0,0.55); color:white; border:none; border-radius:5px; cursor:pointer; transition:.3s; display: flex; align-items: center; }
-    #playPauseButton:not(.is-paused) { padding: 2.5px 10px; font-size: 16px; }
-    #playPauseButton.is-paused { padding: 2.5px 10px; font-size: 16px; }
+    #playPauseButton{ 
+        position:fixed; 
+        top:20px; 
+        left:20px; 
+        z-index:1000; 
+        background-color:rgba(0,0,0,0.55); 
+        color:white; 
+        border:none; 
+        border-radius:5px; 
+        cursor:pointer; 
+        display: flex; 
+        align-items: center;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+        transform-origin: top left;
+    }
+
+    /* Botão PAUSE (tocando) - 50% MENOR */
+    #playPauseButton:not(.is-paused) { 
+        padding: 2.5px 10px; 
+        font-size: 16px; 
+        transform: scale(0.5);
+    }
+    #playPauseButton:not(.is-paused):hover {
+        transform: scale(0.55);
+    }
+
+    /* Botão PLAY (pausado) - 50% MAIOR */
+    #playPauseButton.is-paused { 
+        padding: 2.5px 10px; 
+        font-size: 16px; 
+        transform: scale(1.5);
+    }
+    #playPauseButton.is-paused:hover {
+        transform: scale(1.55);
+    }
+
     #playPauseButton span { color: #28a745; line-height: 1; }
     #playPauseButton:not(.is-paused) span { font-size: 2em; }
     #playPauseButton.is-paused span { font-size: 1.6em; }
-    #playPauseButton:hover{transform:scale(1.05)}
+    
     .mic-wrapper{position:fixed;bottom:130px;left:50%;transform:translateX(-50%);z-index:999;display:inline-flex;align-items:center;justify-content:center}
     #mic-button{background-color:#007bff;color:white;border:none;border-radius:9999px;padding:15px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:.2s}
     #mic-button:hover{background-color:#0056b3;transform:scale(1.1)}
@@ -137,7 +170,6 @@
         clearTimeout(statusTimer);
         statusDiv.textContent = message;
         statusDiv.classList.add('is-visible');
-
         if (duration) {
             statusTimer = setTimeout(() => {
                 statusDiv.classList.remove('is-visible');
@@ -169,47 +201,13 @@
         updatePlayPauseButton();
     });
 
-    // ALTERAÇÃO: Lógica para o fim dos vídeos
     allVideos.forEach(video => {
         video.addEventListener('ended', () => {
-            // Casos especiais para vídeos que continuam em sequência
-            if (video.id === 'video_acucar') {
-                videoAcucarEntity.setAttribute('visible', 'false');
-                videoAcucar2Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoAcucar2;
-                videoAcucar2.play();
-                return; // Mantém o botão como Pause
-            }
-            if (video.id === 'video_acucar2') {
-                videoAcucar2Entity.setAttribute('visible', 'false');
-                videoAcucar3Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoAcucar3;
-                videoAcucar3.play();
-                return;
-            }
-            if (video.id === 'video_feijao') {
-                videoFeijaoEntity.setAttribute('visible', 'false');
-                videoFeijao2Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoFeijao2;
-                videoFeijao2.play();
-                return; 
-            }
-            if (video.id === 'video_feijao2') {
-                videoFeijao2Entity.setAttribute('visible', 'false');
-                videoFeijao3Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoFeijao3;
-                videoFeijao3.play();
-                return;
-            }
-            if (video.id === 'video_feijao3') {
-                videoFeijao3Entity.setAttribute('visible', 'false');
-                videoFeijao4Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoFeijao4;
-                videoFeijao4.play();
-                return;
-            }
-            
-            // Caso padrão para todos os outros vídeos: reseta o botão
+            if (video.id === 'video_acucar') { videoAcucarEntity.setAttribute('visible', 'false'); videoAcucar2Entity.setAttribute('visible', 'true'); currentVideoElement = videoAcucar2; videoAcucar2.play(); return; }
+            if (video.id === 'video_acucar2') { videoAcucar2Entity.setAttribute('visible', 'false'); videoAcucar3Entity.setAttribute('visible', 'true'); currentVideoElement = videoAcucar3; videoAcucar3.play(); return; }
+            if (video.id === 'video_feijao') { videoFeijaoEntity.setAttribute('visible', 'false'); videoFeijao2Entity.setAttribute('visible', 'true'); currentVideoElement = videoFeijao2; videoFeijao2.play(); return;  }
+            if (video.id === 'video_feijao2') { videoFeijao2Entity.setAttribute('visible', 'false'); videoFeijao3Entity.setAttribute('visible', 'true'); currentVideoElement = videoFeijao3; videoFeijao3.play(); return; }
+            if (video.id === 'video_feijao3') { videoFeijao3Entity.setAttribute('visible', 'false'); videoFeijao4Entity.setAttribute('visible', 'true'); currentVideoElement = videoFeijao4; videoFeijao4.play(); return; }
             isPlaying = false;
             updatePlayPauseButton();
         });
@@ -247,7 +245,25 @@
             }
         };
 
-        micButton.addEventListener('touchstart', (e) => { e.preventDefault(); if(recognizing) return; try { micWrapper.classList.add('recording'); recognition.start(); recognizing = true; } catch (err) { showStatus('Erro ao iniciar.', 3000); micWrapper.classList.remove('recording'); }});
+        micButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if(recognizing) return;
+            if (isPlaying) {
+                const videoToPause = currentVideoElement;
+                if (videoToPause) videoToPause.pause();
+                isPlaying = false;
+                updatePlayPauseButton();
+            }
+            try {
+                micWrapper.classList.add('recording');
+                recognition.start();
+                recognizing = true;
+            } catch (err) {
+                showStatus('Erro ao iniciar.', 3000);
+                micWrapper.classList.remove('recording');
+            }
+        });
+
         micButton.addEventListener('touchend', (e) => { e.preventDefault(); if(recognizing) { recognition.stop(); }});
 
     } else {
@@ -269,7 +285,6 @@
     function handleSpeechCommand(command) {
         stopAllVideos();
         allVideoEntities.forEach(entity => entity.setAttribute('visible', 'false'));
-
         let targetVideo = null;
         let targetEntity = null;
 
@@ -281,14 +296,12 @@
 
         if (targetEntity && targetVideo) {
             showStatus(`Comando "${command}" recebido. Clique em Play.`, 4000);
-            
             targetEntity.setAttribute('visible', 'true');
             currentVideoElement = targetVideo;
             isPlaying = false;
             updatePlayPauseButton(); 
         } else {
             showStatus('Comando não reconhecido.', 3000);
-            
             videoInicialEntity.setAttribute('visible', 'true');
             currentVideoElement = initialVideo;
             isPlaying = false;
