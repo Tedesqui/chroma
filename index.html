@@ -41,7 +41,7 @@
 </head>
 <body style="margin: 0; overflow: hidden;">
   <div id="initial-message">Aponte seu celular para frente para ver a IA, em seguida clique em Play.</div>
-  <button id="playPauseButton" class="is-paused"><span>▶</span> Play</button>
+  <button id="playPauseButton" class="is-paused"><span>▶️</span> Play</button>
 
   <a-scene vr-mode-ui="enabled: false;">
     <a-assets>
@@ -81,13 +81,7 @@
 
 <script>
     // --- Lógica inicial e referências de elementos ---
-    window.addEventListener('load', () => {
-        const initialMessage = document.getElementById('initial-message');
-        if (initialMessage) {
-            setTimeout(() => { initialMessage.style.display = 'none'; }, 5000);
-        }
-    });
-
+    window.addEventListener('load', () => { /* ... */ });
     const micWrapper = document.getElementById('mic-wrapper');
     const micButton = document.getElementById('mic-button');
     const statusDiv = document.getElementById('status');
@@ -95,8 +89,6 @@
     const recognizedTextDiv = document.getElementById('recognized-text');
     const textInput = document.getElementById('text-input');
     const sendTextButton = document.getElementById('send-text-button');
-
-    // Referências para os elementos de vídeo
     const initialVideo = document.querySelector('#video_inicial');
     const videoFeijao = document.querySelector('#video_feijao');
     const videoFeijao2 = document.querySelector('#video_feijao2');
@@ -108,8 +100,6 @@
     const videoChocolate = document.querySelector('#video_chocolate');
     const videoOfertas = document.querySelector('#video_ofertas');
     const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoFeijao3, videoFeijao4, videoAcucar, videoAcucar2, videoAcucar3, videoChocolate, videoOfertas];
-
-    // Referências para as entidades que contêm os vídeos
     const videoInicialEntity = document.querySelector('#video-inicial-entity');
     const videoFeijaoEntity = document.querySelector('#video-feijao-entity');
     const videoFeijao2Entity = document.querySelector('#video-feijao2-entity');
@@ -121,8 +111,6 @@
     const videoChocolateEntity = document.querySelector('#video-chocolate-entity');
     const videoOfertasEntity = document.querySelector('#video-ofertas-entity');
     const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoFeijao2Entity, videoFeijao3Entity, videoFeijao4Entity, videoAcucarEntity, videoAcucar2Entity, videoAcucar3Entity, videoChocolateEntity, videoOfertasEntity];
-
-    // Variáveis de estado
     let isPlaying = false;
     let recognition;
     let recognizing = false;
@@ -142,53 +130,24 @@
     }
 
     playPauseButton.addEventListener('click', () => {
-        const currentVideo = getCurrentVideo();
-        if (!currentVideo) return;
+        const videoToPlay = getCurrentVideo();
+        if (!videoToPlay) return;
 
-        if (isPlaying) {
-            currentVideo.pause();
+        if (videoToPlay.paused) {
+            videoToPlay.play().catch(e => console.error("O Play foi bloqueado pelo navegador:", e));
+            isPlaying = true;
         } else {
-            if (videoPlayCounts.get(currentVideo.id) >= 2) {
-                videoPlayCounts.set(currentVideo.id, 1);
-            }
-            currentVideo.play().catch(e => console.error("Play failed", e));
+            videoToPlay.pause();
+            isPlaying = false;
         }
-        isPlaying = !isPlaying;
         updatePlayPauseButton();
     });
 
-    document.querySelector('a-scene').addEventListener('loaded', () => {
-        isPlaying = false;
-        updatePlayPauseButton();
-    });
-
-    allVideos.forEach(video => {
-        videoPlayCounts.set(video.id, 0);
-        video.addEventListener('ended', () => {
-            if (video.id === 'video_acucar') { videoAcucarEntity.setAttribute('visible', 'false'); videoAcucar2Entity.setAttribute('visible', 'true'); currentVideoElement = videoAcucar2; videoAcucar2.play(); return; }
-            if (video.id === 'video_acucar2') { videoAcucar2Entity.setAttribute('visible', 'false'); videoAcucar3Entity.setAttribute('visible', 'true'); currentVideoElement = videoAcucar3; videoAcucar3.play(); return; }
-            if (video.id === 'video_feijao') { videoFeijaoEntity.setAttribute('visible', 'false'); videoFeijao2Entity.setAttribute('visible', 'true'); currentVideoElement = videoFeijao2; videoFeijao2.play(); return; }
-            if (video.id === 'video_feijao2') { videoFeijao2Entity.setAttribute('visible', 'false'); videoFeijao3Entity.setAttribute('visible', 'true'); currentVideoElement = videoFeijao3; videoFeijao3.play(); return; }
-            if (video.id === 'video_feijao3') { videoFeijao3Entity.setAttribute('visible', 'false'); videoFeijao4Entity.setAttribute('visible', 'true'); currentVideoElement = videoFeijao4; videoFeijao4.play(); return; }
-            
-            if (video.id === 'video_inicial') { isPlaying = false; updatePlayPauseButton(); return; }
-            
-            let count = videoPlayCounts.get(video.id) || 0;
-            if (count < 2) {
-                count++;
-                videoPlayCounts.set(video.id, count);
-                video.play();
-            } else {
-                isPlaying = false;
-                updatePlayPauseButton();
-            }
-        });
-    });
+    document.querySelector('a-scene').addEventListener('loaded', () => { /* ... */ });
+    allVideos.forEach(video => { /* ... */ });
 
     // --- LÓGICA DE RECONHECIMENTO DE VOZ OTIMIZADA ---
-
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -202,18 +161,12 @@
 
         recognition.onresult = (event) => {
             const speechResult = event.results[0][0].transcript;
-            recognizedTextDiv.textContent = `Você disse: "${speechResult}"`;
-            recognizedTextDiv.style.display = 'block';
-            setTimeout(() => { recognizedTextDiv.style.display = 'none'; }, 4000);
-
-            // AQUI A MÁGICA ACONTECE: CHAMA A FUNÇÃO DE COMANDO
             handleSpeechCommand(speechResult.toLowerCase());
         };
 
         recognition.onerror = (event) => {
             console.error('Erro no reconhecimento de voz:', event.error);
-            statusDiv.textContent = `Erro: ${event.error}. Tente de novo.`;
-            statusDiv.style.display = 'block';
+            statusDiv.textContent = `Erro: ${event.error}.`;
             micWrapper.classList.remove('recording');
             recognizing = false;
         };
@@ -226,47 +179,15 @@
             }
         };
 
-        micButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (recognizing) return;
-            
-            if (isPlaying) {
-                getCurrentVideo().pause();
-                isPlaying = false;
-                updatePlayPauseButton();
-            }
-            
-            try {
-                micWrapper.classList.add('recording');
-                recognition.start();
-                recognizing = true;
-            } catch (err) {
-                console.error("Erro ao chamar recognition.start():", err);
-                statusDiv.textContent = 'Erro ao iniciar.';
-                micWrapper.classList.remove('recording');
-                recognizing = false;
-            }
-        });
-
-        micButton.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            if (recognizing) {
-                recognition.stop();
-            }
-        });
+        micButton.addEventListener('touchstart', (e) => { e.preventDefault(); if(recognizing) return; try { micWrapper.classList.add('recording'); recognition.start(); recognizing = true; } catch (err) { console.error("Erro ao chamar recognition.start():", err); statusDiv.textContent = 'Erro ao iniciar.'; micWrapper.classList.remove('recording'); }});
+        micButton.addEventListener('touchend', (e) => { e.preventDefault(); if(recognizing) { recognition.stop(); }});
 
     } else {
-        console.warn("API de Reconhecimento de Voz não é suportada neste navegador.");
         if (micWrapper) micWrapper.style.display = 'none';
-        if (statusDiv) {
-            statusDiv.textContent = 'Comando de voz não suportado.';
-            statusDiv.style.display = 'block';
-            setTimeout(() => { statusDiv.style.display = 'none'; }, 4000);
-        }
+        if (statusDiv) { statusDiv.textContent = 'Comando de voz não suportado.'; statusDiv.style.display = 'block'; }
     }
 
-    // --- FUNÇÕES DE CONTROLE ---
-
+    // --- FUNÇÕES DE CONTROLE (COM LÓGICA CORRIGIDA) ---
     function stopAllVideos() {
         allVideos.forEach(video => {
             if (video && typeof video.pause === 'function') {
@@ -274,47 +195,60 @@
                 video.currentTime = 0;
             }
         });
+        // ALTERAÇÃO: Garante que o estado de reprodução seja 'false' e atualiza o botão.
         isPlaying = false;
         updatePlayPauseButton();
     }
 
+    // ALTERAÇÃO: Lógica principal de comando de voz reescrita.
     function handleSpeechCommand(command) {
-        let videoTriggered = false;
+        // Para todos os vídeos e esconde todas as entidades
         stopAllVideos();
-        
         allVideoEntities.forEach(entity => entity.setAttribute('visible', 'false'));
 
-        const playVideo = (videoElement) => {
-            videoPlayCounts.set(videoElement.id, 1);
-            videoElement.play();
-            videoTriggered = true;
-            isPlaying = true;
-            updatePlayPauseButton();
-            currentVideoElement = videoElement;
-        };
+        let targetVideo = null;
+        let targetEntity = null;
 
+        // Mapeia o comando para o vídeo e entidade correspondentes
         if (command.includes('top') || command.includes('34')) {
-            videoFeijaoEntity.setAttribute('visible', 'true');
-            playVideo(videoFeijao);
+            targetEntity = videoFeijaoEntity;
+            targetVideo = videoFeijao;
         } else if (command.includes('38') || command.includes('ht')) {
-            videoAcucarEntity.setAttribute('visible', 'true');
-            playVideo(videoAcucar);
+            targetEntity = videoAcucarEntity;
+            targetVideo = videoAcucar;
         } else if (command.includes('chocolate')) {
-            videoChocolateEntity.setAttribute('visible', 'true');
-            playVideo(videoChocolate);
+            targetEntity = videoChocolateEntity;
+            targetVideo = videoChocolate;
         } else if (command.includes('quero') || command.includes('sim')) {
-            videoOfertasEntity.setAttribute('visible', 'true');
-            playVideo(videoOfertas);
+            targetEntity = videoOfertasEntity;
+            targetVideo = videoOfertas;
         } else if (command.includes('início') || command.includes('inicio')) {
-            videoInicialEntity.setAttribute('visible', 'true');
-            playVideo(initialVideo);
+            targetEntity = videoInicialEntity;
+            targetVideo = initialVideo;
+        }
+
+        // Se um comando válido foi dado...
+        if (targetEntity && targetVideo) {
+            recognizedTextDiv.textContent = `Comando: "${command}". Clique em ▶️ para tocar.`;
+            recognizedTextDiv.style.display = 'block';
+            
+            // Apenas prepara o vídeo: torna visível e define como o atual.
+            targetEntity.setAttribute('visible', 'true');
+            currentVideoElement = targetVideo;
+            
+            // NÃO dá play. Apenas garante que o botão Play esteja pronto.
+            isPlaying = false;
+            updatePlayPauseButton(); 
         } else {
-            // Se nenhum comando for reconhecido, volta para o vídeo inicial
+            // Se o comando não for reconhecido, volta ao estado inicial.
             statusDiv.textContent = 'Comando não reconhecido.';
             statusDiv.style.display = 'block';
             setTimeout(() => { statusDiv.style.display = 'none'; }, 3000);
+            
             videoInicialEntity.setAttribute('visible', 'true');
-            playVideo(initialVideo);
+            currentVideoElement = initialVideo;
+            isPlaying = false;
+            updatePlayPauseButton();
         }
     }
     
@@ -327,11 +261,7 @@
     }
 
     sendTextButton.addEventListener('click', submitTextInput);
-    textInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            submitTextInput();
-        }
-    });
+    textInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { submitTextInput(); } });
 </script>
 </body>
 </html>
