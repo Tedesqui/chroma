@@ -1,11 +1,10 @@
 {
-    {
-        "name": "iatess-app-user",
-        "version": "1.0.0",
-        "private": true,
-        "dependencies": {
-            "aws-sdk": "^2.1589.0",
-            "dotenv": "^16.4.5",
-            "formidable": "^3.5.1"
-        }
-    }
+  "name": "iatess-transcribe-app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.1589.0",
+    "dotenv": "^16.4.5",
+    "formidable": "^3.5.1"
+  }
+}
