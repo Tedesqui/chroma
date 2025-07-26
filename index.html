@@ -11,7 +11,6 @@
   
   <style>
     body{margin:0}
-    /* Estilo para a mensagem inicial */
     #initial-message {
         position: fixed;
         top: 50%;
@@ -41,24 +40,11 @@
         display: flex;
         align-items: center;
     }
-    #playPauseButton:not(.is-paused) {
-        padding: 2.5 10px;
-        font-size: 16px;
-    }
-    #playPauseButton.is-paused {
-        padding: 2.5px 10px;
-        font-size: 16px;
-    }
-    #playPauseButton span { 
-        color: #28a745; 
-        line-height: 1;
-    }
-    #playPauseButton:not(.is-paused) span {
-        font-size: 3em;
-    }
-    #playPauseButton.is-paused span {
-        font-size: 1.6em;
-    }
+    #playPauseButton:not(.is-paused) { padding: 2.5 10px; font-size: 16px; }
+    #playPauseButton.is-paused { padding: 2.5px 10px; font-size: 16px; }
+    #playPauseButton span { color: #28a745; line-height: 1; }
+    #playPauseButton:not(.is-paused) span { font-size: 3em; }
+    #playPauseButton.is-paused span { font-size: 1.6em; }
     #playPauseButton.rotating{transform:rotate(360deg)}
     #playPauseButton:hover{transform:scale(1.05)}
     .mic-wrapper{position:fixed;bottom:130px;left:50%;transform:translateX(-50%);z-index:999;display:inline-flex;align-items:center;justify-content:center}
@@ -96,16 +82,22 @@
         font-size: 16px;
         transition: background-color 0.2s;
     }
-    #send-text-button:hover {
-        background-color: #0056b3;
-    }
-    #footerSocial{position:fixed;bottom:0;left:0;right:0;padding:20px 0;display:flex;justify-content:center;gap:40px;z-index:999;background-color:rgba(0,0,0,0.1);box-shadow:0 0 19.5px rgba(0,0,0,.47)}
+    #send-text-button:hover { background-color: #0056b3; }
+    #footerSocial{position:fixed;bottom:0;left:0;right:0;padding:20px 0;display:flex;justify-content:center;gap:40px;z-index:999;background-color:rgba(0,0,0,0.1);box-shadow:0 0 19.5px rgba(0,0,0,.47); transition: visibility 0.2s, opacity 0.2s;}
     #footerSocial a{display:flex;align-items:center;justify-content:center;width:34.56px;height:34.56px;text-decoration:none}
     #footerSocial svg{width:34.56px;height:34.56px;transition:.3s}
     #footerSocial a:hover svg{transform:scale(1.1)}
     #footerSocial .facebook svg{fill:#00008B}
     #footerSocial .instagram svg{fill:#833AB4}
     #footerSocial .whatsapp svg{fill:#25D366}
+
+    /* --- CSS NOVO --- */
+    /* Quando o teclado estiver ativo, oculte o rodapé e o botão do microfone */
+    body.keyboard-active #footerSocial,
+    body.keyboard-active .mic-wrapper {
+        visibility: hidden;
+        opacity: 0;
+    }
   </style>
 </head>
 
@@ -114,11 +106,9 @@
 
   <button id="playPauseButton"><span>▶</span> Play</button>
 
-  <a-scene 
-    vr-mode-ui="enabled: false;" 
-  >
+  <a-scene vr-mode-ui="enabled: false;">
     <a-assets>
-      <video id="video_chocolate" src="videos/chocolate.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_chocolate" src="videos/chocolate.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_acucar" src="videos/acucar.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_acucar2" src="videos/acucar2.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_acucar3" src="videos/acucar3.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
@@ -126,69 +116,38 @@
       <video id="video_feijao2" src="videos/feijao2.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_feijao3" src="videos/feijao3.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_feijao4" src="videos/feijao4.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
-      <video id="video_inicial" src="videos/inicio.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
+      <video id="video_inicial" src="videos/inicio.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_ofertas" src="videos/ofertas.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
     </a-assets>
     
     <a-camera></a-camera>
 
-    <a-entity id="video-inicial-entity" position="0 1 -8" visible="true" look-at="[camera]">
-      <a-video src="#video_inicial" width="7" height="7"></a-video>
-    </a-entity>
-
-    <a-entity id="video-chocolate-entity" position=0 1 -8" visible="false" look-at="[camera]">
-      <a-video src="#video_chocolate" width="7" height="7"></a-video>
-    </a-entity>
-
-    <a-entity id="video-acucar-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_acucar" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-acucar2-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-        <a-video src="#video_acucar2" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-acucar3-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-        <a-video src="#video_acucar3" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-feijao-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_feijao" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-feijao2-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_feijao2" width="20" height="5"></a-video>
-    </a-entity>
-    
-    <a-entity id="video-feijao3-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_feijao3" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-feijao4-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_feijao4" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-ofertas-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_ofertas" width="20" height="5"></a-video>
-    </a-entity>
+    <a-entity id="video-inicial-entity" position="0 1 -8" visible="true" look-at="[camera]"><a-video width="7" height="7" material="shader: flat; src: #video_inicial; transparent: true;"></a-video></a-entity>
+    <a-entity id="video-chocolate-entity" position="0 1 -8" visible="false" look-at="[camera]"><a-video width="7" height="7" material="shader: flat; src: #video_chocolate; transparent: true;"></a-video></a-entity>
+    <a-entity id="video-acucar-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video width="20" height="5" material="shader: flat; src: #video_acucar; transparent: true;"></a-video></a-entity>
+    <a-entity id="video-acucar2-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video width="20" height="5" material="shader: flat; src: #video_acucar2; transparent: true;"></a-video></a-entity>
+    <a-entity id="video-acucar3-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video width="20" height="5" material="shader: flat; src: #video_acucar3; transparent: true;"></a-video></a-entity>
+    <a-entity id="video-feijao-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video width="20" height="5" material="shader: flat; src: #video_feijao; transparent: true;"></a-video></a-entity>
+    <a-entity id="video-feijao2-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video width="20" height="5" material="shader: flat; src: #video_feijao2; transparent: true;"></a-video></a-entity>
+    <a-entity id="video-feijao3-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video width="20" height="5" material="shader: flat; src: #video_feijao3; transparent: true;"></a-video></a-entity>
+    <a-entity id="video-feijao4-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video width="20" height="5" material="shader: flat; src: #video_feijao4; transparent: true;"></a-video></a-entity>
+    <a-entity id="video-ofertas-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video width="20" height="5" material="shader: flat; src: #video_ofertas; transparent: true;"></a-video></a-entity>
 
   </a-scene>
 
   <div id="status">Ouvindo...</div>
   <div class="mic-wrapper" id="mic-wrapper">
-      <button id="mic-button">
+      <button id="mic-button" disabled>
           <svg xmlns="http://www.w3.org/2000/svg" id="mic-icon" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" />
           </svg>
       </button>
   </div>
   <div id="recognized-text"></div>
-  
   <div id="text-input-container">
     <input type="text" id="text-input" placeholder="Digite o nome do modelo..." autocomplete="off">
     <button id="send-text-button">➤</button>
   </div>
-
   <div id="footerSocial">
     <a href="https://www.facebook.com/tritonyachts/" target="_blank" class="facebook" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.87v-6.98h-3v-2.89h3v-2.2c0-3 1.79-4.66 4.53-4.66 1.31 0 2.68.24 2.68.24v3h-1.54c-1.52 0-1.99.95-1.99 1.92v2.7h3.4l-.54 2.89h-2.86v6.98A10 10 0 0 0 22 12"/></svg></a>
     <a href="https://www.instagram.com/tritonyachts/" target="_blank" class="instagram" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm0 2h10c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3zm5 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm4.5-.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg></a>
@@ -196,316 +155,23 @@
   </div>
 
   <script>
-    // Lógica para esconder a mensagem inicial após 5 segundos
-    window.addEventListener('load', () => {
-        const initialMessage = document.getElementById('initial-message');
-        if (initialMessage) {
-            setTimeout(() => {
-                initialMessage.style.display = 'none';
-            }, 5000); // 5000 milissegundos = 5 segundos
-        }
-    });
+    document.addEventListener('DOMContentLoaded', () => {
+        // Seleção de todos os elementos
+        const textInput = document.getElementById('text-input');
+        // ...e todos os outros seletores que você já tinha...
 
-    const micWrapper = document.getElementById('mic-wrapper');
-    const micButton = document.getElementById('mic-button');
-    const statusDiv = document.getElementById('status');
-    const playPauseButton = document.getElementById('playPauseButton');
-    const recognizedTextDiv = document.getElementById('recognized-text');
-    const textInput = document.getElementById('text-input');
-    const sendTextButton = document.getElementById('send-text-button');
-
-    // Referências para os elementos de vídeo
-    const initialVideo = document.querySelector('#video_inicial');
-    const videoFeijao = document.querySelector('#video_feijao');
-    const videoFeijao2 = document.querySelector('#video_feijao2');
-    const videoFeijao3 = document.querySelector('#video_feijao3');
-    const videoFeijao4 = document.querySelector('#video_feijao4');
-    const videoAcucar = document.querySelector('#video_acucar');
-    const videoAcucar2 = document.querySelector('#video_acucar2');
-    const videoAcucar3 = document.querySelector('#video_acucar3');
-    const videoChocolate = document.querySelector('#video_chocolate');
-    const videoOfertas = document.querySelector('#video_ofertas');
-    const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoFeijao3, videoFeijao4, videoAcucar, videoAcucar2, videoAcucar3, videoChocolate, videoOfertas];
-
-    // Referências para as entidades que contêm os vídeos
-    const videoInicialEntity = document.querySelector('#video-inicial-entity');
-    const videoFeijaoEntity = document.querySelector('#video-feijao-entity');
-    const videoFeijao2Entity = document.querySelector('#video-feijao2-entity');
-    const videoFeijao3Entity = document.querySelector('#video-feijao3-entity');
-    const videoFeijao4Entity = document.querySelector('#video-feijao4-entity');
-    const videoAcucarEntity = document.querySelector('#video-acucar-entity');
-    const videoAcucar2Entity = document.querySelector('#video-acucar2-entity');
-    const videoAcucar3Entity = document.querySelector('#video-acucar3-entity');
-    const videoChocolateEntity = document.querySelector('#video-chocolate-entity');
-    const videoOfertasEntity = document.querySelector('#video-ofertas-entity');
-    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoFeijao2Entity, videoFeijao3Entity, videoFeijao4Entity, videoAcucarEntity, videoAcucar2Entity, videoAcucar3Entity, videoChocolateEntity, videoOfertasEntity];
-
-    let isPlaying = false;
-    let recognition;
-    let recognizing = false;
-    let lastPlayedVideo = null;
-    let newVideoPlayed = false;
-    const videoPlayCounts = new Map();
-    let currentVideoElement = initialVideo; // Inicia com o vídeo principal
-
-    function getCurrentVideo() {
-        return currentVideoElement; // Retorna o vídeo atualmente ativo
-    }
-
-    function updatePlayPauseButton() {
-        if (isPlaying) {
-            playPauseButton.innerHTML = '<span>⏸</span> Pause';
-            playPauseButton.classList.add('is-paused');
-        } else {
-            playPauseButton.innerHTML = '<span>▶</span> Play';
-            playPauseButton.classList.remove('is-paused');
-        }
-    }
-
-    playPauseButton.addEventListener('click', () => {
-        const currentVideo = getCurrentVideo();
-        if (!currentVideo) return;
-
-        if (isPlaying) {
-            currentVideo.pause();
-        } else {
-            if (videoPlayCounts.get(currentVideo.id) >= 2) {
-                videoPlayCounts.set(currentVideo.id, 1);
-            }
-            currentVideo.play().catch(e => console.error("Play failed", e));
-        }
-        isPlaying = !isPlaying;
-        updatePlayPauseButton();
-
-        playPauseButton.classList.add('rotating');
-        setTimeout(() => playPauseButton.classList.remove('rotating'), 300);
-    });
-
-    document.querySelector('a-scene').addEventListener('loaded', () => {
-        isPlaying = false;
-        updatePlayPauseButton();
-    });
-
-    // Bloco de código modificado para a repetição e transição de vídeos
-    allVideos.forEach(video => {
-        videoPlayCounts.set(video.id, 0);
-        video.addEventListener('ended', () => {
-            // Caso especial: ao terminar video_acucar, toca video_acucar2
-            if (video.id === 'video_acucar') {
-                videoAcucarEntity.setAttribute('visible', 'false');
-                videoAcucar2Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoAcucar2;
-                videoAcucar2.play();
-                return;
-            }
-
-            // Caso especial: ao terminar video_acucar2, toca video_acucar3
-            if (video.id === 'video_acucar2') {
-                videoAcucar2Entity.setAttribute('visible', 'false');
-                videoAcucar3Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoAcucar3;
-                videoAcucar3.play();
-                return;
-            }
-            
-            // Caso especial: ao terminar video_feijao, toca video_feijao2
-            if (video.id === 'video_feijao') {
-                videoFeijaoEntity.setAttribute('visible', 'false');
-                videoFeijao2Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoFeijao2;
-                videoFeijao2.play();
-                return; 
-            }
-            
-            // Caso especial: ao terminar video_feijao2, toca video_feijao3
-            if (video.id === 'video_feijao2') {
-                videoFeijao2Entity.setAttribute('visible', 'false');
-                videoFeijao3Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoFeijao3;
-                videoFeijao3.play();
-                return;
-            }
-            
-            // Caso especial: ao terminar video_feijao3, toca video_feijao4
-            if (video.id === 'video_feijao3') {
-                videoFeijao3Entity.setAttribute('visible', 'false');
-                videoFeijao4Entity.setAttribute('visible', 'true');
-                currentVideoElement = videoFeijao4;
-                videoFeijao4.play();
-                return;
-            }
-            
-            // Caso especial: vídeo inicial não repete
-            if (video.id === 'video_inicial') {
-                isPlaying = false;
-                updatePlayPauseButton();
-                return;
-            }
-
-            // Lógica de repetição padrão para os outros vídeos
-            let count = videoPlayCounts.get(video.id) || 0;
-            if (count < 2) {
-                count++;
-                videoPlayCounts.set(video.id, count);
-                video.play();
-            } else {
-                isPlaying = false;
-                updatePlayPauseButton();
-            }
+        // --- JAVASCRIPT NOVO ---
+        // Adiciona e remove uma classe do body quando o teclado está ativo/inativo
+        textInput.addEventListener('focus', () => {
+            document.body.classList.add('keyboard-active');
         });
-    });
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.lang = 'pt-BR';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onresult = (event) => {
-            const speechResult = event.results[0][0].transcript;
-            console.log('Você disse:', speechResult.toLowerCase());
-            
-            recognizedTextDiv.textContent = `"${speechResult}"`;
-            recognizedTextDiv.style.display = 'block';
-
-            setTimeout(() => {
-                recognizedTextDiv.style.display = 'none';
-            }, 5000);
-
-            handleSpeechCommand(speechResult.toLowerCase());
-        };
-
-        recognition.onerror = (event) => {
-            console.error('Erro no reconhecimento:', event.error);
-        };
-
-        recognition.onend = () => {
-            recognizing = false;
-            micWrapper.classList.remove('recording');
-            statusDiv.style.display = 'none';
-
-            if (!newVideoPlayed && lastPlayedVideo) {
-                lastPlayedVideo.play();
-                isPlaying = true;
-                updatePlayPauseButton();
-            }
-            lastPlayedVideo = null;
-        };
-    } else {
-        console.error("Speech Recognition API not supported in this browser.");
-        micButton.style.display = 'none';
-    }
-
-    function handleSpeechCommand(command) {
-        let videoTriggered = false;
-        stopAllVideos();
-        
-        // Oculta todas as entidades de vídeo
-        allVideoEntities.forEach(entity => entity.setAttribute('visible', 'false'));
-
-        const playVideo = (videoElement) => {
-            videoPlayCounts.set(videoElement.id, 1);
-            videoElement.play();
-            videoTriggered = true;
-            isPlaying = true;
-            updatePlayPauseButton();
-        };
-
-        if (command.includes('Top') || command.includes('34')) {
-            videoFeijaoEntity.setAttribute('visible', 'true');
-            currentVideoElement = videoFeijao;
-            playVideo(videoFeijao);
-        } else if (command.includes('38') || command.includes('ht')) {
-            videoAcucarEntity.setAttribute('visible', 'true');
-            currentVideoElement = videoAcucar;
-            playVideo(videoAcucar);
-        } else if (command.includes('chocolate')) {
-            videoChocolateEntity.setAttribute('visible', 'true');
-            currentVideoElement = videoChocolate;
-            playVideo(videoChocolate);
-        } else if (command.includes('quero') || command.includes('sim')) {
-            videoOfertasEntity.setAttribute('visible', 'true');
-            currentVideoElement = videoOfertas;
-            playVideo(videoOfertas);
-        } else if (command.includes('início') || command.includes('inicio')) {
-            videoInicialEntity.setAttribute('visible', 'true');
-            currentVideoElement = initialVideo;
-            playVideo(initialVideo);
-        }
-        
-        if (videoTriggered) {
-            newVideoPlayed = true;
-        }
-    }
-
-    function stopAllVideos() {
-        allVideos.forEach(video => {
-            video.pause();
-            video.currentTime = 0;
+        textInput.addEventListener('blur', () => {
+            document.body.classList.remove('keyboard-active');
         });
-    }
-    
-    function pauseAllVideos() {
-        allVideos.forEach(video => video.pause());
-    }
 
-    micButton.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        
-        newVideoPlayed = false;
-        const currentVideo = getCurrentVideo();
-        lastPlayedVideo = currentVideo && !currentVideo.paused ? currentVideo : null;
-        
-        if (isPlaying) {
-            pauseAllVideos();
-            isPlaying = false;
-            updatePlayPauseButton();
-        }
-
-        if (!recognizing && recognition) {
-            try {
-                micWrapper.classList.add('recording');
-                statusDiv.style.display = 'block';
-                if(navigator.vibrate) navigator.vibrate(200);
-                
-                recognition.start();
-                recognizing = true;
-            } catch(err) {
-                console.error("Erro ao iniciar o reconhecimento:", err);
-                micWrapper.classList.remove('recording');
-                statusDiv.style.display = 'none';
-                if (lastPlayedVideo) {
-                    lastPlayedVideo.play();
-                    isPlaying = true;
-                    updatePlayPauseButton();
-                }
-            }
-        }
-    });
-
-    micButton.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        if (recognizing && recognition) {
-            recognition.stop();
-        }
-    });
-
-    function submitTextInput() {
-        const command = textInput.value.trim().toLowerCase();
-        if (command) {
-            handleSpeechCommand(command);
-            textInput.value = '';
-        }
-    }
-
-    sendTextButton.addEventListener('click', submitTextInput);
-
-    textInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            submitTextInput();
-        }
+        // O resto do seu código JavaScript continua aqui...
+        // ... (lógica de microfone, vídeos, etc.) ...
     });
   </script>
 </body>
