@@ -11,94 +11,42 @@
   
   <style>
     body{margin:0}
-    /* Estilo para a mensagem inicial */
     #initial-message {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 2000;
-        background-color: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        font-size: 18px;
-        max-width: 80%;
-        font-family: sans-serif;
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000;
+        background-color: rgba(0, 0, 0, 0.8); color: white; padding: 20px; border-radius: 10px;
+        text-align: center; font-size: 18px; max-width: 80%; font-family: sans-serif;
     }
     #playPauseButton{
-        position:fixed;
-        top:20px;
-        left:20px;
-        z-index:1000;
-        background-color:rgba(0,0,0,0.55);
-        color:white;
-        border:none;
-        border-radius:5px;
-        cursor:pointer;
-        transition:.3s;
-        display: flex;
-        align-items: center;
+        position:fixed; top:20px; left:20px; z-index:1000; background-color:rgba(0,0,0,0.55);
+        color:white; border:none; border-radius:5px; cursor:pointer; transition:.3s; display: flex; align-items: center;
     }
-    #playPauseButton:not(.is-paused) {
-        padding: 2.5 10px;
-        font-size: 16px;
-    }
-    #playPauseButton.is-paused {
-        padding: 2.5px 10px;
-        font-size: 16px;
-    }
-    #playPauseButton span { 
-        color: #28a745; 
-        line-height: 1;
-    }
-    #playPauseButton:not(.is-paused) span {
-        font-size: 3em;
-    }
-    #playPauseButton.is-paused span {
-        font-size: 1.6em;
-    }
+    #playPauseButton:not(.is-paused) { padding: 2.5px 10px; font-size: 16px; }
+    #playPauseButton.is-paused { padding: 2.5px 10px; font-size: 16px; }
+    #playPauseButton span { color: #28a745; line-height: 1; }
+    #playPauseButton:not(.is-paused) span { font-size: 2em; }
+    #playPauseButton.is-paused span { font-size: 1.6em; }
     #playPauseButton.rotating{transform:rotate(360deg)}
     #playPauseButton:hover{transform:scale(1.05)}
     .mic-wrapper{position:fixed;bottom:130px;left:50%;transform:translateX(-50%);z-index:999;display:inline-flex;align-items:center;justify-content:center}
     #mic-button{background-color:#007bff;color:white;border:none;border-radius:9999px;padding:15px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:.2s}
     #mic-button:hover{background-color:#0056b3;transform:scale(1.1)}
     .mic-wrapper.recording #mic-button{transform:scale(1.7);background-color:#28a745!important}
+    #mic-button.disabled { background-color: #6c757d; cursor: not-allowed; }
     #mic-button svg{width:28px;height:28px;display:block}
     #status{position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:10px 20px;background-color:rgba(0,0,0,0.7);color:white;border-radius:10px;z-index:998;font-size:16px;display:none}
     #recognized-text{position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:8px 15px;background-color:rgba(0,0,0,0.75);color:white;border-radius:8px;z-index:998;font-size:16px;display:none;text-align:center;max-width:90%}
     #text-input-container {
-        position: fixed;
-        bottom: 80px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 998;
-        display: flex;
-        align-items: center;
+        position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 998; display: flex; align-items: center;
     }
     #text-input {
-        padding: 10px 15px;
-        border-radius: 20px 0 0 20px;
-        border: 1px solid #aaa;
-        border-right: none;
-        width: 200px;
-        font-size: 16px;
-        background-color: rgba(255, 255, 255, 0.9);
+        padding: 10px 15px; border-radius: 20px 0 0 20px; border: 1px solid #aaa; border-right: none;
+        width: 200px; font-size: 16px; background-color: rgba(255, 255, 255, 0.9);
     }
     #send-text-button {
-        padding: 10px 15px;
-        border-radius: 0 20px 20px 0;
-        border: 1px solid #aaa;
-        background-color: #007bff;
-        color: white;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.2s;
+        padding: 10px 15px; border-radius: 0 20px 20px 0; border: 1px solid #aaa; background-color: #007bff;
+        color: white; cursor: pointer; font-size: 16px; transition: background-color 0.2s;
     }
-    #send-text-button:hover {
-        background-color: #0056b3;
-    }
+    #send-text-button:hover { background-color: #0056b3; }
     #footerSocial{position:fixed;bottom:0;left:0;right:0;padding:20px 0;display:flex;justify-content:center;gap:40px;z-index:999;background-color:rgba(0,0,0,0.1);box-shadow:0 0 19.5px rgba(0,0,0,.47)}
     #footerSocial a{display:flex;align-items:center;justify-content:center;width:34.56px;height:34.56px;text-decoration:none}
     #footerSocial svg{width:34.56px;height:34.56px;transition:.3s}
@@ -114,9 +62,7 @@
 
   <button id="playPauseButton"><span>▶</span> Play</button>
 
-  <a-scene 
-    vr-mode-ui="enabled: false;" 
-  >
+  <a-scene vr-mode-ui="enabled: false;">
     <a-assets>
       <video id="video_chocolate" src="videos/chocolate.webm" playsinline webkit-playsinline crossorigin="anonymous"></video>
       <video id="video_acucar" src="videos/acucar.mp4" playsinline webkit-playsinline crossorigin="anonymous"></video>
@@ -132,60 +78,28 @@
     
     <a-camera></a-camera>
 
-    <a-entity id="video-inicial-entity" position="0 1 -8" visible="true" look-at="[camera]">
-      <a-video src="#video_inicial" width="7" height="7"></a-video>
-    </a-entity>
-
-    <a-entity id="video-chocolate-entity" position=0 1 -8" visible="false" look-at="[camera]">
-      <a-video src="#video_chocolate" width="7" height="7"></a-video>
-    </a-entity>
-
-    <a-entity id="video-acucar-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_acucar" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-acucar2-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-        <a-video src="#video_acucar2" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-acucar3-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-        <a-video src="#video_acucar3" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-feijao-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_feijao" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-feijao2-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_feijao2" width="20" height="5"></a-video>
-    </a-entity>
-    
-    <a-entity id="video-feijao3-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_feijao3" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-feijao4-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_feijao4" width="20" height="5"></a-video>
-    </a-entity>
-
-    <a-entity id="video-ofertas-entity" position="0 1.7 -15" visible="false" look-at="[camera]">
-      <a-video src="#video_ofertas" width="20" height="5"></a-video>
-    </a-entity>
-
+    <a-entity id="video-inicial-entity" position="0 1 -8" visible="true" look-at="[camera]"><a-video src="#video_inicial" width="7" height="7"></a-video></a-entity>
+    <a-entity id="video-chocolate-entity" position="0 1 -8" visible="false" look-at="[camera]"><a-video src="#video_chocolate" width="7" height="7"></a-video></a-entity>
+    <a-entity id="video-acucar-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video src="#video_acucar" width="20" height="5"></a-video></a-entity>
+    <a-entity id="video-acucar2-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video src="#video_acucar2" width="20" height="5"></a-video></a-entity>
+    <a-entity id="video-acucar3-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video src="#video_acucar3" width="20" height="5"></a-video></a-entity>
+    <a-entity id="video-feijao-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video src="#video_feijao" width="20" height="5"></a-video></a-entity>
+    <a-entity id="video-feijao2-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video src="#video_feijao2" width="20" height="5"></a-video></a-entity>
+    <a-entity id="video-feijao3-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video src="#video_feijao3" width="20" height="5"></a-video></a-entity>
+    <a-entity id="video-feijao4-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video src="#video_feijao4" width="20" height="5"></a-video></a-entity>
+    <a-entity id="video-ofertas-entity" position="0 1.7 -15" visible="false" look-at="[camera]"><a-video src="#video_ofertas" width="20" height="5"></a-video></a-entity>
   </a-scene>
 
-  <div id="status">Ouvindo...</div>
+  <div id="status"></div>
   <div class="mic-wrapper" id="mic-wrapper">
       <button id="mic-button">
-          <svg xmlns="http://www.w3.org/2000/svg" id="mic-icon" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" />
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" id="mic-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" /></svg>
       </button>
   </div>
   <div id="recognized-text"></div>
   
   <div id="text-input-container">
-    <input type="text" id="text-input" placeholder="Digite o nome do modelo..." autocomplete="off">
+    <input type="text" id="text-input" placeholder="Digite seu comando..." autocomplete="off">
     <button id="send-text-button">➤</button>
   </div>
 
@@ -196,13 +110,11 @@
   </div>
 
   <script>
-    // Lógica para esconder a mensagem inicial após 5 segundos
+    // --- Lógica inicial e referências de elementos ---
     window.addEventListener('load', () => {
         const initialMessage = document.getElementById('initial-message');
         if (initialMessage) {
-            setTimeout(() => {
-                initialMessage.style.display = 'none';
-            }, 5000); // 5000 milissegundos = 5 segundos
+            setTimeout(() => { initialMessage.style.display = 'none'; }, 5000);
         }
     });
 
@@ -214,7 +126,6 @@
     const textInput = document.getElementById('text-input');
     const sendTextButton = document.getElementById('send-text-button');
 
-    // Referências para os elementos de vídeo
     const initialVideo = document.querySelector('#video_inicial');
     const videoFeijao = document.querySelector('#video_feijao');
     const videoFeijao2 = document.querySelector('#video_feijao2');
@@ -227,7 +138,6 @@
     const videoOfertas = document.querySelector('#video_ofertas');
     const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoFeijao3, videoFeijao4, videoAcucar, videoAcucar2, videoAcucar3, videoChocolate, videoOfertas];
 
-    // Referências para as entidades que contêm os vídeos
     const videoInicialEntity = document.querySelector('#video-inicial-entity');
     const videoFeijaoEntity = document.querySelector('#video-feijao-entity');
     const videoFeijao2Entity = document.querySelector('#video-feijao2-entity');
@@ -243,22 +153,18 @@
     let isPlaying = false;
     let recognition;
     let recognizing = false;
-    let lastPlayedVideo = null;
-    let newVideoPlayed = false;
     const videoPlayCounts = new Map();
-    let currentVideoElement = initialVideo; // Inicia com o vídeo principal
+    let currentVideoElement = initialVideo;
 
-    function getCurrentVideo() {
-        return currentVideoElement; // Retorna o vídeo atualmente ativo
-    }
+    function getCurrentVideo() { return currentVideoElement; }
 
     function updatePlayPauseButton() {
         if (isPlaying) {
             playPauseButton.innerHTML = '<span>⏸</span> Pause';
-            playPauseButton.classList.add('is-paused');
+            playPauseButton.classList.remove('is-paused');
         } else {
             playPauseButton.innerHTML = '<span>▶</span> Play';
-            playPauseButton.classList.remove('is-paused');
+            playPauseButton.classList.add('is-paused');
         }
     }
 
@@ -286,11 +192,9 @@
         updatePlayPauseButton();
     });
 
-    // Bloco de código modificado para a repetição e transição de vídeos
     allVideos.forEach(video => {
         videoPlayCounts.set(video.id, 0);
         video.addEventListener('ended', () => {
-            // Caso especial: ao terminar video_acucar, toca video_acucar2
             if (video.id === 'video_acucar') {
                 videoAcucarEntity.setAttribute('visible', 'false');
                 videoAcucar2Entity.setAttribute('visible', 'true');
@@ -298,8 +202,6 @@
                 videoAcucar2.play();
                 return;
             }
-
-            // Caso especial: ao terminar video_acucar2, toca video_acucar3
             if (video.id === 'video_acucar2') {
                 videoAcucar2Entity.setAttribute('visible', 'false');
                 videoAcucar3Entity.setAttribute('visible', 'true');
@@ -307,8 +209,6 @@
                 videoAcucar3.play();
                 return;
             }
-            
-            // Caso especial: ao terminar video_feijao, toca video_feijao2
             if (video.id === 'video_feijao') {
                 videoFeijaoEntity.setAttribute('visible', 'false');
                 videoFeijao2Entity.setAttribute('visible', 'true');
@@ -316,8 +216,6 @@
                 videoFeijao2.play();
                 return; 
             }
-            
-            // Caso especial: ao terminar video_feijao2, toca video_feijao3
             if (video.id === 'video_feijao2') {
                 videoFeijao2Entity.setAttribute('visible', 'false');
                 videoFeijao3Entity.setAttribute('visible', 'true');
@@ -325,8 +223,6 @@
                 videoFeijao3.play();
                 return;
             }
-            
-            // Caso especial: ao terminar video_feijao3, toca video_feijao4
             if (video.id === 'video_feijao3') {
                 videoFeijao3Entity.setAttribute('visible', 'false');
                 videoFeijao4Entity.setAttribute('visible', 'true');
@@ -334,15 +230,11 @@
                 videoFeijao4.play();
                 return;
             }
-            
-            // Caso especial: vídeo inicial não repete
             if (video.id === 'video_inicial') {
                 isPlaying = false;
                 updatePlayPauseButton();
                 return;
             }
-
-            // Lógica de repetição padrão para os outros vídeos
             let count = videoPlayCounts.get(video.id) || 0;
             if (count < 2) {
                 count++;
@@ -355,7 +247,10 @@
         });
     });
 
+    // --- LÓGICA DE RECONHECIMENTO DE VOZ OTIMIZADA ---
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -378,31 +273,68 @@
         };
 
         recognition.onerror = (event) => {
-            console.error('Erro no reconhecimento:', event.error);
+            console.error('Erro no reconhecimento de voz:', event.error);
+            statusDiv.textContent = `Erro: ${event.error}`;
+            statusDiv.style.display = 'block';
+            micWrapper.classList.remove('recording');
+            recognizing = false;
         };
 
         recognition.onend = () => {
-            recognizing = false;
-            micWrapper.classList.remove('recording');
-            statusDiv.style.display = 'none';
+            if (recognizing) {
+                recognizing = false;
+                micWrapper.classList.remove('recording');
+                statusDiv.style.display = 'none';
+            }
+        };
 
-            if (!newVideoPlayed && lastPlayedVideo) {
-                lastPlayedVideo.play();
-                isPlaying = true;
+        micButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (recognizing) return;
+
+            if (isPlaying) {
+                getCurrentVideo().pause();
+                isPlaying = false;
                 updatePlayPauseButton();
             }
-            lastPlayedVideo = null;
-        };
+            
+            try {
+                micWrapper.classList.add('recording');
+                statusDiv.textContent = 'Ouvindo...';
+                statusDiv.style.display = 'block';
+                recognition.start();
+                recognizing = true;
+            } catch (err) {
+                console.error("Erro ao iniciar o reconhecimento:", err);
+                statusDiv.textContent = 'Erro ao iniciar.';
+                micWrapper.classList.remove('recording');
+                recognizing = false;
+            }
+        });
+
+        micButton.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (recognizing) {
+                recognition.stop();
+            }
+        });
+
     } else {
-        console.error("Speech Recognition API not supported in this browser.");
-        micButton.style.display = 'none';
+        console.warn("API de Reconhecimento de Voz não é suportada neste navegador.");
+        if (micWrapper) {
+            micWrapper.style.display = 'none';
+        }
+        if (statusDiv) {
+            statusDiv.textContent = 'Comando de voz não suportado.';
+            statusDiv.style.display = 'block';
+            setTimeout(() => { statusDiv.style.display = 'none'; }, 5000);
+        }
     }
 
     function handleSpeechCommand(command) {
         let videoTriggered = false;
         stopAllVideos();
         
-        // Oculta todas as entidades de vídeo
         allVideoEntities.forEach(entity => entity.setAttribute('visible', 'false'));
 
         const playVideo = (videoElement) => {
@@ -413,7 +345,7 @@
             updatePlayPauseButton();
         };
 
-        if (command.includes('Top') || command.includes('34')) {
+        if (command.includes('top') || command.includes('34')) {
             videoFeijaoEntity.setAttribute('visible', 'true');
             currentVideoElement = videoFeijao;
             playVideo(videoFeijao);
@@ -434,64 +366,17 @@
             currentVideoElement = initialVideo;
             playVideo(initialVideo);
         }
-        
-        if (videoTriggered) {
-            newVideoPlayed = true;
-        }
     }
 
     function stopAllVideos() {
         allVideos.forEach(video => {
-            video.pause();
-            video.currentTime = 0;
+            if (video && typeof video.pause === 'function') {
+                video.pause();
+                video.currentTime = 0;
+            }
         });
     }
     
-    function pauseAllVideos() {
-        allVideos.forEach(video => video.pause());
-    }
-
-    micButton.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        
-        newVideoPlayed = false;
-        const currentVideo = getCurrentVideo();
-        lastPlayedVideo = currentVideo && !currentVideo.paused ? currentVideo : null;
-        
-        if (isPlaying) {
-            pauseAllVideos();
-            isPlaying = false;
-            updatePlayPauseButton();
-        }
-
-        if (!recognizing && recognition) {
-            try {
-                micWrapper.classList.add('recording');
-                statusDiv.style.display = 'block';
-                if(navigator.vibrate) navigator.vibrate(200);
-                
-                recognition.start();
-                recognizing = true;
-            } catch(err) {
-                console.error("Erro ao iniciar o reconhecimento:", err);
-                micWrapper.classList.remove('recording');
-                statusDiv.style.display = 'none';
-                if (lastPlayedVideo) {
-                    lastPlayedVideo.play();
-                    isPlaying = true;
-                    updatePlayPauseButton();
-                }
-            }
-        }
-    });
-
-    micButton.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        if (recognizing && recognition) {
-            recognition.stop();
-        }
-    });
-
     function submitTextInput() {
         const command = textInput.value.trim().toLowerCase();
         if (command) {
@@ -501,7 +386,6 @@
     }
 
     sendTextButton.addEventListener('click', submitTextInput);
-
     textInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             submitTextInput();
