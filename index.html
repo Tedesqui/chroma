@@ -11,6 +11,20 @@
   
   <style>
     body{margin:0; font-family: sans-serif;}
+    /* ALTERAÇÃO 1: Adicionar transições e uma classe para esconder elementos */
+    #initial-message, #recognized-text {
+        /* Define o estado inicial e a transição */
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    }
+    .is-hidden {
+        /* Define o estado final 'escondido' */
+        opacity: 0;
+        visibility: hidden;
+    }
+    /* Fim da Alteração 1 */
+    
     #initial-message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; background-color: rgba(0, 0, 0, 0.8); color: white; padding: 20px; border-radius: 10px; text-align: center; font-size: 18px; max-width: 80%; }
     #playPauseButton{ position:fixed; top:20px; left:20px; z-index:1000; background-color:rgba(0,0,0,0.55); color:white; border:none; border-radius:5px; cursor:pointer; transition:.3s; display: flex; align-items: center; }
     #playPauseButton:not(.is-paused) { padding: 2.5px 10px; font-size: 16px; }
@@ -25,7 +39,13 @@
     .mic-wrapper.recording #mic-button{transform:scale(1.7);background-color:#28a745!important}
     #mic-button svg{width:28px;height:28px;display:block}
     #status{position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:10px 20px;background-color:rgba(0,0,0,0.7);color:white;border-radius:10px;z-index:998;font-size:16px;display:none}
-    #recognized-text{position:fixed;bottom:210px;left:50%;transform:translateX(-50%);padding:8px 15px;background-color:rgba(0,0,0,0.75);color:white;border-radius:8px;z-index:998;font-size:16px;display:none;text-align:center;max-width:90%}
+    
+    #recognized-text{
+        position:fixed;bottom:210px;left:50%;transform:translateX(-50%);
+        padding:8px 15px;background-color:rgba(0,0,0,0.75);color:white;
+        border-radius:8px;z-index:998;font-size:16px;
+        text-align:center;max-width:90%;
+    }
     #text-input-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 998; display: flex; align-items: center; }
     #text-input { padding: 10px 15px; border-radius: 20px 0 0 20px; border: 1px solid #aaa; border-right: none; width: 200px; font-size: 16px; background-color: rgba(255, 255, 255, 0.9); }
     #send-text-button { padding: 10px 15px; border-radius: 0 20px 20px 0; border: 1px solid #aaa; background-color: #007bff; color: white; cursor: pointer; font-size: 16px; transition: background-color 0.2s; }
@@ -71,7 +91,7 @@
 
   <div id="status"></div>
   <div class="mic-wrapper" id="mic-wrapper"><button id="mic-button"><svg xmlns="http://www.w3.org/2000/svg" id="mic-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" /></svg></button></div>
-  <div id="recognized-text"></div>
+  <div id="recognized-text" class="is-hidden"></div>
   <div id="text-input-container"><input type="text" id="text-input" placeholder="Digite seu comando..." autocomplete="off"><button id="send-text-button">➤</button></div>
   <div id="footerSocial">
     <a href="https://www.facebook.com/tritonyachts/" target="_blank" class="facebook" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.87v-6.98h-3v-2.89h3v-2.2c0-3 1.79-4.66 4.53-4.66 1.31 0 2.68.24 2.68.24v3h-1.54c-1.52 0-1.99.95-1.99 1.92v2.7h3.4l-.54 2.89h-2.86v6.98A10 10 0 0 0 22 12"/></svg></a>
@@ -81,14 +101,7 @@
 
 <script>
     // --- Lógica inicial e referências de elementos ---
-    window.addEventListener('load', () => {
-        const initialMessage = document.getElementById('initial-message');
-        if (initialMessage) {
-            // A mensagem inicial já desaparece após 5 segundos
-            setTimeout(() => { initialMessage.style.display = 'none'; }, 5000);
-        }
-    });
-
+    const initialMessage = document.getElementById('initial-message');
     const micWrapper = document.getElementById('mic-wrapper');
     const micButton = document.getElementById('mic-button');
     const statusDiv = document.getElementById('status');
@@ -96,36 +109,24 @@
     const recognizedTextDiv = document.getElementById('recognized-text');
     const textInput = document.getElementById('text-input');
     const sendTextButton = document.getElementById('send-text-button');
+    const allVideos = Array.from(document.querySelectorAll('a-assets video'));
+    const allVideoEntities = Array.from(document.querySelectorAll('a-scene a-entity[id^="video-"]'));
     const initialVideo = document.querySelector('#video_inicial');
-    const videoFeijao = document.querySelector('#video_feijao');
-    const videoFeijao2 = document.querySelector('#video_feijao2');
-    const videoFeijao3 = document.querySelector('#video_feijao3');
-    const videoFeijao4 = document.querySelector('#video_feijao4');
-    const videoAcucar = document.querySelector('#video_acucar');
-    const videoAcucar2 = document.querySelector('#video_acucar2');
-    const videoAcucar3 = document.querySelector('#video_acucar3');
-    const videoChocolate = document.querySelector('#video_chocolate');
-    const videoOfertas = document.querySelector('#video_ofertas');
-    const allVideos = [initialVideo, videoFeijao, videoFeijao2, videoFeijao3, videoFeijao4, videoAcucar, videoAcucar2, videoAcucar3, videoChocolate, videoOfertas];
-    const videoInicialEntity = document.querySelector('#video-inicial-entity');
-    const videoFeijaoEntity = document.querySelector('#video-feijao-entity');
-    const videoFeijao2Entity = document.querySelector('#video-feijao2-entity');
-    const videoFeijao3Entity = document.querySelector('#video-feijao3-entity');
-    const videoFeijao4Entity = document.querySelector('#video-feijao4-entity');
-    const videoAcucarEntity = document.querySelector('#video-acucar-entity');
-    const videoAcucar2Entity = document.querySelector('#video-acucar2-entity');
-    const videoAcucar3Entity = document.querySelector('#video-acucar3-entity');
-    const videoChocolateEntity = document.querySelector('#video-chocolate-entity');
-    const videoOfertasEntity = document.querySelector('#video-ofertas-entity');
-    const allVideoEntities = [videoInicialEntity, videoFeijaoEntity, videoFeijao2Entity, videoFeijao3Entity, videoFeijao4Entity, videoAcucarEntity, videoAcucar2Entity, videoAcucar3Entity, videoChocolateEntity, videoOfertasEntity];
     let isPlaying = false;
     let recognition;
     let recognizing = false;
-    const videoPlayCounts = new Map();
     let currentVideoElement = initialVideo;
+    
+    // ALTERAÇÃO 2: Lógica para esconder a mensagem inicial usando classes CSS
+    window.addEventListener('load', () => {
+        if (initialMessage) {
+            setTimeout(() => {
+                initialMessage.classList.add('is-hidden');
+            }, 5000);
+        }
+    });
 
-    function getCurrentVideo() { return currentVideoElement; }
-
+    // --- Lógica de UI e Vídeo (sem grandes alterações) ---
     function updatePlayPauseButton() {
         if (isPlaying) {
             playPauseButton.innerHTML = '<span>⏸️</span> Pause';
@@ -137,11 +138,11 @@
     }
 
     playPauseButton.addEventListener('click', () => {
-        const videoToPlay = getCurrentVideo();
+        const videoToPlay = currentVideoElement;
         if (!videoToPlay) return;
 
         if (videoToPlay.paused) {
-            videoToPlay.play().catch(e => console.error("O Play foi bloqueado pelo navegador:", e));
+            videoToPlay.play().catch(e => console.error("Play bloqueado:", e));
             isPlaying = true;
         } else {
             videoToPlay.pause();
@@ -150,9 +151,7 @@
         updatePlayPauseButton();
     });
 
-    document.querySelector('a-scene').addEventListener('loaded', () => { isPlaying = false; updatePlayPauseButton(); });
-    allVideos.forEach(video => { /* ... (lógica 'ended' omitida para clareza) */ });
-
+    // --- Lógica de Reconhecimento de Voz (sem alterações) ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
@@ -170,23 +169,16 @@
             handleSpeechCommand(speechResult.toLowerCase());
         };
 
-        recognition.onerror = (event) => {
-            console.error('Erro no reconhecimento de voz:', event.error);
-            statusDiv.textContent = `Erro: ${event.error}.`;
-            micWrapper.classList.remove('recording');
-            recognizing = false;
-        };
-
+        recognition.onerror = (event) => { console.error('Erro:', event.error); statusDiv.textContent = `Erro: ${event.error}.`; recognizing = false; micWrapper.classList.remove('recording');};
         recognition.onend = () => { if (recognizing) { recognizing = false; micWrapper.classList.remove('recording'); statusDiv.style.display = 'none'; } };
-
-        micButton.addEventListener('touchstart', (e) => { e.preventDefault(); if(recognizing) return; try { micWrapper.classList.add('recording'); recognition.start(); recognizing = true; } catch (err) { console.error("Erro ao chamar recognition.start():", err); statusDiv.textContent = 'Erro ao iniciar.'; micWrapper.classList.remove('recording'); }});
+        micButton.addEventListener('touchstart', (e) => { e.preventDefault(); if(recognizing) return; try { micWrapper.classList.add('recording'); recognition.start(); recognizing = true; } catch (err) { statusDiv.textContent = 'Erro ao iniciar.'; micWrapper.classList.remove('recording'); }});
         micButton.addEventListener('touchend', (e) => { e.preventDefault(); if(recognizing) { recognition.stop(); }});
-
     } else {
         if (micWrapper) micWrapper.style.display = 'none';
         if (statusDiv) { statusDiv.textContent = 'Comando de voz não suportado.'; statusDiv.style.display = 'block'; }
     }
 
+    // --- Funções de Controle ---
     function stopAllVideos() {
         allVideos.forEach(video => {
             if (video && typeof video.pause === 'function') {
@@ -204,21 +196,29 @@
 
         let targetVideo = null;
         let targetEntity = null;
-
-        if (command.includes('top') || command.includes('34')) { targetEntity = videoFeijaoEntity; targetVideo = videoFeijao; }
-        else if (command.includes('38') || command.includes('ht')) { targetEntity = videoAcucarEntity; targetVideo = videoAcucar; }
-        else if (command.includes('chocolate')) { targetEntity = videoChocolateEntity; targetVideo = videoChocolate; }
-        else if (command.includes('quero') || command.includes('sim')) { targetEntity = videoOfertasEntity; targetVideo = videoOfertas; }
-        else if (command.includes('início') || command.includes('inicio')) { targetEntity = videoInicialEntity; targetVideo = initialVideo; }
+        
+        const videoMap = {
+            feijao: [document.querySelector('#video-feijao-entity'), document.querySelector('#video_feijao')],
+            acucar: [document.querySelector('#video-acucar-entity'), document.querySelector('#video_acucar')],
+            chocolate: [document.querySelector('#video-chocolate-entity'), document.querySelector('#video_chocolate')],
+            ofertas: [document.querySelector('#video-ofertas-entity'), document.querySelector('#video_ofertas')],
+            inicio: [document.querySelector('#video-inicial-entity'), document.querySelector('#video_inicial')]
+        };
+        
+        if (command.includes('top') || command.includes('34')) { [targetEntity, targetVideo] = videoMap.feijao; }
+        else if (command.includes('38') || command.includes('ht')) { [targetEntity, targetVideo] = videoMap.acucar; }
+        else if (command.includes('chocolate')) { [targetEntity, targetVideo] = videoMap.chocolate; }
+        else if (command.includes('quero') || command.includes('sim')) { [targetEntity, targetVideo] = videoMap.ofertas; }
+        else if (command.includes('início') || command.includes('inicio')) { [targetEntity, targetVideo] = videoMap.inicio; }
 
         if (targetEntity && targetVideo) {
             recognizedTextDiv.textContent = `Comando: "${command}". Clique em ▶️ para tocar.`;
-            recognizedTextDiv.style.display = 'block';
+            // ALTERAÇÃO 3: Lógica para mostrar e esconder a mensagem de comando usando classes CSS
+            recognizedTextDiv.classList.remove('is-hidden');
             
-            // ALTERAÇÃO: Faz a mensagem de "Clique em Play" desaparecer após 5 segundos
             setTimeout(() => {
-                recognizedTextDiv.style.display = 'none';
-            }, 5000); // 5000 milissegundos = 5 segundos
+                recognizedTextDiv.classList.add('is-hidden');
+            }, 5000);
 
             targetEntity.setAttribute('visible', 'true');
             currentVideoElement = targetVideo;
@@ -228,8 +228,7 @@
             statusDiv.textContent = 'Comando não reconhecido.';
             statusDiv.style.display = 'block';
             setTimeout(() => { statusDiv.style.display = 'none'; }, 3000);
-            
-            videoInicialEntity.setAttribute('visible', 'true');
+            document.querySelector('#video-inicial-entity').setAttribute('visible', 'true');
             currentVideoElement = initialVideo;
             isPlaying = false;
             updatePlayPauseButton();
